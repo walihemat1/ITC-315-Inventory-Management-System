@@ -17,4 +17,4 @@ As a shop owner, I want to get alerts when a product is running low so that I ca
 # User Story 7: Search Products
 As a shop owner, I want to search for products by name or category so that I can find them quickly.
 # User Story 8: Basic Sales/Inventory Report
-
+# User Story 9:
