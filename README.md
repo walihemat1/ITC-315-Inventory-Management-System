@@ -126,9 +126,9 @@ It helps ensure that the business always knows what items are available, when to
 | ---------------- | ------------- |
 | Hamid Sultani    | Product Owner |
 | Zainab Qasemi    | Scrum Master  |
-| Ahmad Wali Hemat | Develoer      |
-| Ali Sina Nazari  | Develoer      |
-| Alia Rafi        | Develoer      |
+| Ahmad Wali Hemat | Developer     |
+| Ali Sina Nazari  | Developer     |
+| Alia Rafi        | Developer     |
 
 ### License
 
