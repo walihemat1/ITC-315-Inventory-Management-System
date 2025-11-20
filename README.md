@@ -5,7 +5,7 @@ It allows users to add, edit, and delete products, record stock-in and stock-out
 The system also provides a dashboard with key inventory statistics and simple reports, enabling managers to make informed decisions about ordering and stock management.  
 This project was developed as a Software Engineering final project using the Scrum methodology to practice agile development, teamwork, and good software engineering practices.
 
-## 📘 Overview
+## Overview
 
 The Inventory Management System (IMS) is designed for small businesses to track and manage their products, stock levels, and inventory activities.  
 It helps ensure that the business always knows what items are available, when to restock, and prevents stock-outs.
@@ -99,26 +99,26 @@ It helps ensure that the business always knows what items are available, when to
 
 ### Clone the repository
 
-git clone https://github.com/your-username/inventory-management-system.git
-cd inventory-management-system
+- git clone https://github.com/walihemat1/ITC-315-Inventory-Management-System.git
+- cd inventory-management-system
 
 ### Backend Setup
 
-cd backend
-npm install
-npm start
+- cd backend
+- npm install
+- npm start
 
 ### Frontend Setup
 
-cd frontend
-npm install
-npm run dev
+- cd frontend
+- npm install
+- npm run dev
 
 ### Environment Variables
 
-MONGO_URI=your-mongo-db-uri
-JWT_SECRET=your-secret
-PORT=5000
+- MONGO_URI=your-mongo-db-uri
+- JWT_SECRET=your-secret
+- PORT=5000
 
 ### Team Members
 
