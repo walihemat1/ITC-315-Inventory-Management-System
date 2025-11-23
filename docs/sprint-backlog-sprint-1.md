@@ -4,3 +4,7 @@ Link for sprint backlog document:
 link for sprint 1 planning meeting:
 (https://drive.google.com/file/d/1BtKyjaY4wnwFQC0bWx7AtTACN_RQcgmq/view?usp=drive_link)
 
+link for sprint 1 planning document:
+(https://docs.google.com/document/d/1E5sVa5rbmSUEhjpsy2uJuRYOVIwdpTda9yS3YsoGbtk/edit?usp=drive_link)
+
+
