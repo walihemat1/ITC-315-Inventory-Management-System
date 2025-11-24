@@ -19,7 +19,7 @@ export const getProducts = async () => {};
     res.status(500).json({message: error.message});
   }
 
-// get a single a product By Id
+// get a single product By Id
 export const getProduct = async () => {};
   try {
     const {id} = req.params;
@@ -27,6 +27,17 @@ export const getProduct = async () => {};
   } catch (error) {
     res.status(500).json({message: error.message});
   }
+
+//update Product
 export const updateProduct = async () => {};
 
+//Delete Product
 export const deleteProduct = async () => {};
+
+module.exports = {
+  createProduct,
+  getProduct,
+  getProducts,
+  updateProduct,
+  deleteProduct
+};
