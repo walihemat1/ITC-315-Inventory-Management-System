@@ -9,6 +9,10 @@ import userRoute from "./routes/userRoutes.js";
 env.config();
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded());
+
+connectDB();
 
 const PORT = process.env.PORT || 5000;
 

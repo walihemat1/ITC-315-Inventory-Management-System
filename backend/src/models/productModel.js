@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
@@ -28,12 +28,14 @@ const productSchema = new mongoose.Schema(
     },
     minimumQuantity: {
       type: Number,
-      default: 0,
+      default: 5,
     },
     lowStock: {
       type: Boolean,
       default: false,
     },
+    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+    supplierId: { type: mongoose.Schema.Types.ObjectId, ref: "Supplier" },
   },
   { timestamps: true }
 );
