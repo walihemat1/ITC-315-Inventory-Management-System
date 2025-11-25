@@ -1,3 +1,13 @@
-import { register } from "../controllers/authController";
+import express from "express";
+import {
+  updateProfile,
+  updatePassword,
+} from "../controllers/userController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
-router.post("/register", register);
+const router = express.Router();
+
+router.update("/profile", authenticateUser, updateProfile);
+router.update("/password", authenticateUser, updatePassword);
+
+export default router;

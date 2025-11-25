@@ -1,10 +1,12 @@
-const Product = require("../models/productModel");
+import Product from "../models/productModel.js";
 
 // Create a product
 const createProduct = async (req, res) => {
   try {
+    // TODO: check if a product with the same name doesn't exit already, if it exits, return a 400 response
     const product = await Product.create(req.body);
-    res.status(201).json(product);
+
+    res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -35,6 +37,23 @@ const getProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// get all products
+export const getProducts = async () => {};
+try {
+  const products = await Product.find({});
+  res.status(200).json(products);
+} catch (error) {
+  res.status(500).json({ message: error.message });
+}
+
+// get a single product By Id
+export const getProduct = async () => {};
+try {
+  const { id } = req.params;
+  const product = await product.findById(id);
+} catch (error) {
+  res.status(500).json({ message: error.message });
+}
 
 // Update a product
 const updateProduct = async (req, res) => {
