@@ -3,6 +3,8 @@ import env from "dotenv";
 import mongoose from "mongoose";
 
 import productRoute from "./routes/productRoutes.js";
+import authRoute from "./routes/authRoutes.js";
+import userRoute from "./routes/userRoutes.js";
 
 env.config();
 
@@ -15,6 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 
 //routes
 app.use("/api/products", productRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/user", userRoute);
 
 mongoose
   .connect(process.env.MONGO_URI)

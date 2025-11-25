@@ -3,7 +3,9 @@ import Product from "../models/productModel.js";
 // Create a product
 export const createProduct = async (req, res) => {
   try {
+    // TODO: check if a product with the same name doesn't exit already, if it exits, return a 400 response
     const product = await Product.create(req.body);
+
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
