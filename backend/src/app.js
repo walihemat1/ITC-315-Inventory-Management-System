@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import productRoute from "./routes/productRoutes.js";
 import authRoute from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoutes.js";
+import connectDB from "./config/db.js";
 
 env.config();
 
