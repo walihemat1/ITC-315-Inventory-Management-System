@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const SaleSchema = new mongoose.Schema({
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", default: null },
-  sellerId: { type: mongoose.Schema.Types.ObjectId, ref: "user", default: null },
+  sellerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   invoiceNumber: String,
   date: { type: Date, default: Date.now },
   items: [
