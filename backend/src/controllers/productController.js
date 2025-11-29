@@ -2,11 +2,6 @@ import Product from "../models/productModel.js";
 
 // Create a product
 export const createProduct = async (req, res) => {
-  if (!req.body.name || !req.body.sku || !req.body.createdBy || !req.body.categoryId || !req.body.supplierId) {
-    return res.status(400).json({ 
-      success: false,
-      message: "Name, SKU, CreatedBy, CategoryId, and SupplierId are required" });
-  }
   try {
     const ifExists = await product.findOne({ name: req.body.name });
     if (ifExists) {
@@ -117,4 +112,5 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 

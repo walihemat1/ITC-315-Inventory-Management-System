@@ -1,53 +1,55 @@
-import Purchase from "../models/purchaseModel"
+import Sale from "../models/saleModel"
 import Product from "../models/productModel"
 import StockLog from "../models/stockLogModel"
 import updateLowStock from "../utils/updateLowStock"
 
-export const createPurchase = async (req, res) => {
+export const createSale = async (req, res) => {
   try {
-    const { supplierId, invoiceNumber, items, amountPaid } = req.body;
+    const { customerId, invoiceNumber, items, tax, discount, amountPaid, paymentMethod } = req.body;
 
-    let totalAmount = 0;
+    let subtotal = 0;
 
-    // Loop through items
     for (const item of items) {
       const product = await Product.findById(item.productId);
       if (!product) return res.status(404).json({ message: "Product not found" });
 
-      const prevQty = product.currentQuantity;
-      const newQty = prevQty + item.quantity;
+      if (product.currentQuantity < item.quantity) {
+        return res.status(400).json({success: false, message: "Not enough stock" });
+      }
 
-      // Update product stock
+      const prevQty = product.currentQuantity;
+      const newQty = prevQty - item.quantity;
+
       product.currentQuantity = newQty;
       await updateLowStock(product);
 
-      // Create stock log
       await StockLog.create({
         productId: product._id,
-        type: "PURCHASE",
+        type: "SALE",
         quantity: item.quantity,
         previousStock: prevQty,
         newStock: newQty,
       });
 
-      // total cost per item
-      item.totalCost = item.unitCost * item.quantity;
-      totalAmount += item.totalCost;
+      item.total = item.quantity * item.price;
+      subtotal += item.total;
     }
 
-    const balanceRemaining = totalAmount - amountPaid;
+    const totalAmount = subtotal + tax - discount;
 
-    // Save the purchase record
-    const purchase = await Purchase.create({
-      supplierId,
+    const sale = await Sale.create({
+      customerId,
       invoiceNumber,
       items,
+      subtotal,
+      tax,
+      discount,
       totalAmount,
       amountPaid,
-      balanceRemaining,
+      paymentMethod,
     });
 
-    res.status(201).json(purchase);
+    res.status(201).json(sale);
 
   } catch (error) {
     res.status(500).json({ message: error.message });
