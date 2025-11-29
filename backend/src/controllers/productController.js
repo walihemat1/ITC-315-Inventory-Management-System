@@ -1,7 +1,7 @@
 import Product from "../models/productModel.js";
 
 // Create a product
-const createProduct = async (req, res) => {
+export const createProduct = async (req, res) => {
   try {
     // TODO: check if a product with the same name doesn't exit already, if it exits, return a 400 response
     const product = await Product.create(req.body);
@@ -13,7 +13,7 @@ const createProduct = async (req, res) => {
 };
 
 // Get all products
-const getProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
   try {
     const products = await Product.find({});
     res.status(200).json(products);
@@ -23,7 +23,7 @@ const getProducts = async (req, res) => {
 };
 
 // Get a single product by ID
-const getProduct = async (req, res) => {
+export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findById(id);
@@ -37,26 +37,9 @@ const getProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// get all products
-export const getProducts = async () => {};
-try {
-  const products = await Product.find({});
-  res.status(200).json(products);
-} catch (error) {
-  res.status(500).json({ message: error.message });
-}
-
-// get a single product By Id
-export const getProduct = async () => {};
-try {
-  const { id } = req.params;
-  const product = await product.findById(id);
-} catch (error) {
-  res.status(500).json({ message: error.message });
-}
 
 // Update a product
-const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findByIdAndUpdate(id, req.body, {
@@ -74,7 +57,7 @@ const updateProduct = async (req, res) => {
 };
 
 // Delete a product
-const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findByIdAndDelete(id);
@@ -89,10 +72,4 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = {
-  createProduct,
-  getProducts,
-  getProduct,
-  updateProduct,
-  deleteProduct,
-};
+
