@@ -1,7 +1,7 @@
-const Category = require("../models/categoryModel");
+import Category from "../models/categoryModel.js";
 
 // Get all categories
-const getCategories = async (req, res) => {
+export const getCategories = async (req, res) => {
   try {
     const categories = await Category.find({});
     res.status(200).json(categories);
@@ -11,7 +11,7 @@ const getCategories = async (req, res) => {
 };
 
 // Get single category by ID
-const getCategory = async (req, res) => {
+export const getCategory = async (req, res) => {
   try {
     const { id } = req.params;
     const category = await Category.findById(id);
@@ -23,7 +23,7 @@ const getCategory = async (req, res) => {
 };
 
 // Create a category
-const createCategory = async (req, res) => {
+export const createCategory = async (req, res) => {
   try {
     const category = await Category.create(req.body);
     res.status(201).json(category);
@@ -33,7 +33,7 @@ const createCategory = async (req, res) => {
 };
 
 // Update a category
-const updateCategory = async (req, res) => {
+export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
     const category = await Category.findByIdAndUpdate(id, req.body, { new: true });
@@ -45,7 +45,7 @@ const updateCategory = async (req, res) => {
 };
 
 // Delete a category
-const deleteCategory = async (req, res) => {
+export const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
     const category = await Category.findByIdAndDelete(id);
@@ -56,10 +56,10 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   getCategories,
   getCategory,
   createCategory,
   updateCategory,
   deleteCategory,
-};
+};  

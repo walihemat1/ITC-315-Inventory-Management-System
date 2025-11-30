@@ -1,5 +1,6 @@
 import express from "express";
 const router = express.Router();
+import upload from "../middleware/upload.js";
 
 import {
   getProduct,
@@ -13,10 +14,10 @@ import { authenticateUser } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/adminMiddleware.js";
 
 router.get("/", authenticateUser, getProducts);
-router.get("/:category", authenticateUser, getProductsByCategory);
+router.get("/category/:category", authenticateUser, getProductsByCategory);
 router.get("/:id", authenticateUser, getProduct);
-router.post("/", authenticateUser, isAdmin, createProduct);
-router.put("/:id", authenticateUser, isAdmin, updateProduct);
+router.post("/create", upload.single("image"), authenticateUser, isAdmin, createProduct);
+router.put("/:id", upload.single('image'), authenticateUser, isAdmin, updateProduct);
 router.delete("/:id", authenticateUser, isAdmin, deleteProduct);
 
 export default router;
