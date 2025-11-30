@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
+
 export const authenticateUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -10,41 +11,39 @@ export const authenticateUser = async (req, res, next) => {
       });
 
     const token = authHeader.split(" ")[1];
-
-    // const token = req.cookie?.token;
     if (!token)
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
         message: "No token was found",
       });
-    let decodedToken = false;
+
+    let decoded;
     try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    } catch (error) {
-      return res.status(400).json({
+      decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    } catch (err) {
+      return res.status(401).json({
         success: false,
-        message: "Token is not valid. Please Login again",
+        message: "Token is not valid. Please log in again",
       });
     }
 
-    if (!decodedToken)
-      return res.status(400).json({
+    const user = await User.findById(decoded.userId).select("-password");
+    if (!user)
+      return res.status(401).json({
         success: false,
-        message: "Token is not valid. Please Login again",
+        message: "User not found",
       });
 
-    const user = await User.findById(decodedToken.userId);
-
-    if (!user)
-      return res.status(500).json({
+    if (!user.isActive)
+      return res.status(403).json({
         success: false,
-        message: "User was not found",
+        message: "Your account is deactivated. Contact admin.",
       });
 
     req.user = user;
     next();
   } catch (error) {
-    console.log("Error in authenticateUser: ", error);
+    console.error("Error in authenticateUser: ", error);
     res.status(500).json({
       success: false,
       error: error.message,
