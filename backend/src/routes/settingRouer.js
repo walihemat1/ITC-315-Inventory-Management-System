@@ -1,6 +1,20 @@
 import express from 'express'
 
-const router = express.Router()
+import {
+  getSettings,
+  updateSettings,
+  createSetting
+}  from "../controllers/settingsController"
 
+const router = express.Router();
 
-router.post("/setting")
+// create setting
+router.post("/", createSetting)
+
+// GET /settings 
+router.get("/", getSettings);
+
+// PATCH /settings 
+router.patch("/", updateSettings);
+
+export default  router;
