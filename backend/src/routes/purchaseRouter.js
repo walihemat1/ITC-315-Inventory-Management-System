@@ -1,11 +1,8 @@
-import express from 'express'
+import express from "express";
+import { createPurchase } from "../controllers/purchaseController";
 
-const router = express.Router()
+const router = express.Router();
 
-
-router.post("/purchase", purchaseController.createPurchase);
-
-
+router.post("/", createPurchase);
 
 export default router;
-

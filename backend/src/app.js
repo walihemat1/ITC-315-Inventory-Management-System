@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 import productRoute from "./routes/productRoutes.js";
 import saleRoute from "./routes/salesRoutes.js";
-import purchaseroutes from "./routes/purchaseRoutes.js";
+import purchaseRoute from "./routes/purchaseRoutes.js";
 import authRoute from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoutes.js";
 import adjustmentRoute from "./routes/adjustmentRouter.js";
@@ -37,6 +37,7 @@ app.use("/api/category", categoryRoute);
 app.use("/api/setting", settingRoute);
 app.use("/api/stock-history", stockLogRoute);
 app.use("/api/supplier", supplierRouter);
+app.use("/api/purchase", purchaseRoute);
 
 mongoose
   .connect(process.env.MONGO_URI)
