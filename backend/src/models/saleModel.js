@@ -18,6 +18,7 @@ const SaleSchema = new mongoose.Schema({
   discount: Number,
   totalAmount: Number,
   amountPaid: Number,
+  notes: String,
   paymentMethod: { type: String, enum: ["cash", "card", "mobile"] },
 }, { timestamps: true });
 

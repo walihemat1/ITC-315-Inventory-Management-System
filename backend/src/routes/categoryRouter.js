@@ -12,7 +12,7 @@ import {
 router.get('/', getCategories);
 router.put('/:id', getCategory);
 router.post('/', createCategory);
-router.put('/:id', updateCategory);
+router.patch('/:id', updateCategory);
 router.delete('/:id', deleteCategory);
 
 export default router;
