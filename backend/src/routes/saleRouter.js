@@ -5,7 +5,7 @@ import { createSale } from '../controllers/saleController';
 const router = express.Router()
 
 
-router.post("/sale", createSale)
+router.post("/", createSale)
 
 
 export default router;
