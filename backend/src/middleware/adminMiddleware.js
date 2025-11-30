@@ -10,7 +10,7 @@ export const isAdmin = async (req, res, next) => {
         message: "User is not logged in.",
       });
 
-    if (!currentLoggedInUser.role !== "admin")
+    if (currentLoggedInUser.role !== "admin")
       return res.status(401).json({
         success: false,
         message: "Unathorized",

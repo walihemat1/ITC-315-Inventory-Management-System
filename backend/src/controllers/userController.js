@@ -60,6 +60,11 @@ export const updateProfile = async (req, res) => {
         message: "User not found! Please login again",
       });
 
+    if (!currentLoggedInUser.isActive)
+      return res
+        .status(403)
+        .json({ status: false, message: "Your account is deactivated" });
+
     // check if user is not admin and trying to update role
     if (currentLoggedInUser.role !== "admin")
       return res.status(401).json({

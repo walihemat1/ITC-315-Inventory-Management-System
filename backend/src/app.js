@@ -8,12 +8,15 @@ import saleRoute from "./routes/salesRoutes.js";
 import purchaseRoute from "./routes/purchaseRoutes.js";
 import authRoute from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoutes.js";
+import adminUserRoute from "./routes/adminUserRouter.js";
 import adjustmentRoute from "./routes/adjustmentRouter.js";
 import categoryRoute from "./routes/categoryRouter.js";
 import saleRoute from "./routes/saleRouter.js";
 import settingRoute from "./routes/settingRouer.js";
 import stockLogRoute from "./routes/stockLogRouter.js";
-import supplierRouter from "./routes/supplierRouter.js";
+import supplierRoute from "./routes/supplierRouter.js";
+import dashboardRoute from "./routes/dashboardRouter.js";
+import reportRoute from "./routes/reportRouter.js";
 
 env.config();
 
@@ -32,16 +35,19 @@ app.use("/api/products", productRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
+app.use("/api/admin/user", adminUserRoute);
 app.use("/api/stock-adjustment", adjustmentRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/sale", saleRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/setting", settingRoute);
 app.use("/api/stock-history", stockLogRoute);
-app.use("/api/supplier", supplierRouter);
+app.use("/api/supplier", supplierRoute);
 app.use("/api/purchase", purchaseRoute);
+app.use("/api/dashboard", dashboardRoute);
+app.use("/api/report", reportRoute);
 
-app.use('/uploads/productImages', express.static('uploads/productImages'))
+app.use("/uploads/productImages", express.static("uploads/productImages"));
 
 mongoose
   .connect(process.env.MONGO_URI)
