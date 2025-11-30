@@ -3,7 +3,10 @@ import Product from "../models/productModel.js";
 // Create a product
 export const createProduct = async (req, res) => {
   try {
-    // TODO: check if a product with the same name doesn't exit already, if it exits, return a 400 response
+    const ifExists = await product.findOne({ name: req.body.name });
+    if (ifExists) {
+      return res.status(400).json({ message: "Product already exists" });
+    }
     const product = await Product.create(req.body);
 
     res.status(200).json(product);
@@ -22,10 +25,38 @@ export const getProducts = async (req, res) => {
   }
 };
 
+// Fetch products by category name
+export const getProductsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    if (!category){
+      return res.status(400).json({
+        success: false,
+        message: "Category name is required" });
+    }
+
+    const products = await Product.find({ category });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching products by category:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // Get a single product by ID
 export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id){
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required" });
+    }
     const product = await Product.findById(id);
 
     if (!product) {
@@ -42,6 +73,11 @@ export const getProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id){
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required" });
+    }
     const product = await Product.findByIdAndUpdate(id, req.body, {
       new: true,
     });
@@ -60,6 +96,11 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id){
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required" });
+    }
     const product = await Product.findByIdAndDelete(id);
 
     if (!product) {

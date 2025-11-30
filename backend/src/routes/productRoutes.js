@@ -7,11 +7,13 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductsByCategory,
 } from "../controllers/productController.js";
 import { authenticateUser } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/adminMiddleware.js";
 
 router.get("/", authenticateUser, getProducts);
+router.get("/:category", authenticateUser, getProductsByCategory);
 router.get("/:id", authenticateUser, getProduct);
 router.post("/", authenticateUser, isAdmin, createProduct);
 router.put("/:id", authenticateUser, isAdmin, updateProduct);
