@@ -3,6 +3,7 @@ import env from "dotenv";
 import mongoose from "mongoose";
 
 import productRoute from "./routes/productRoutes.js";
+import categoryRoute from "./routes/categoryRouter.js";
 import saleRoute from "./routes/salesRoutes.js";
 import purchaseroutes from "./routes/purchaseRoutes.js";
 import authRoute from "./routes/authRoutes.js";
@@ -24,10 +25,13 @@ app.use(express.urlencoded({ extended: true }));
 
 //routes
 app.use("/api/products", productRoute);
+app.use("/api/categories", categoryRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/sales", saleRoute);
 app.use("/api/purchases", purchaseroutes);
+
+app.use('/uploads/productImages', express.static('uploads/productImages'))
 
 mongoose
   .connect(process.env.MONGO_URI)

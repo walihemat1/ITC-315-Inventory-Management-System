@@ -1,7 +1,13 @@
-const express = require("express");
-const Product = require("../models/categoryModel.js")
+import express from "express";
+
 const router = express.Router();
-const {getCategory, getCategories, createCategory, updateCategory, deleteCategory} = require ("../controllers/categoryController.js");
+import {
+    getCategory, 
+    getCategories, 
+    createCategory, 
+    updateCategory, 
+    deleteCategory} from 
+    "../controllers/categoryController.js";
 
 router.get('/', getCategories);
 router.put('/:id', getCategory);
@@ -9,4 +15,4 @@ router.post('/', createCategory);
 router.put('/:id', updateCategory);
 router.delete('/:id', deleteCategory);
 
-module.exports = router;
+export default router;
