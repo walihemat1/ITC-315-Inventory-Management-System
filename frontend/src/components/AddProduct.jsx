@@ -26,14 +26,15 @@ export default function AddProduct({ products = [], onProductAdded }) {
     supplierId: "",
     purchasePrice: "",
     sellingPrice: "",
-    quantity: "",
-    minQuantity: "",
-    image: null,
+    currentQuantity: "",
+    minimumQuantity: "",
+    image: null, // fixed
   });
 
   // Handle input change
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
     } else {
@@ -41,7 +42,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
     }
   };
 
-  // Handle form submit
+  // Handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,10 +54,11 @@ export default function AddProduct({ products = [], onProductAdded }) {
       data.append("supplierId", formData.supplierId);
       data.append("purchasePrice", formData.purchasePrice);
       data.append("sellingPrice", formData.sellingPrice);
-      data.append("quantity", formData.quantity);
-      data.append("minQuantity", formData.minQuantity);
+      data.append("currentQuantity", formData.currentQuantity);
+      data.append("minimumQuantity", formData.minimumQuantity);
+
       if (formData.image) {
-        data.append("image", formData.image);
+        data.append("image", formData.image); // fixed
       }
 
       const response = await fetch(
@@ -71,9 +73,8 @@ export default function AddProduct({ products = [], onProductAdded }) {
 
       if (response.ok) {
         alert("Product added successfully!");
-        // Call parent function to refresh product list
         onProductAdded(result);
-        // Reset form
+
         setFormData({
           name: "",
           sku: "",
@@ -81,8 +82,8 @@ export default function AddProduct({ products = [], onProductAdded }) {
           supplierId: "",
           purchasePrice: "",
           sellingPrice: "",
-          quantity: "",
-          minQuantity: "",
+          currentQuantity: "",
+          minimumQuantity: "",
           image: null,
         });
       } else {
@@ -163,7 +164,6 @@ export default function AddProduct({ products = [], onProductAdded }) {
             value={formData.supplierId}
             onChange={handleChange}
             className="w-full p-2 rounded bg-cyan-700 text-white border border-cyan-600"
-            
           >
             <option value="">Select Supplier</option>
             {uniqueSuppliers.map((sup) => (
@@ -185,7 +185,6 @@ export default function AddProduct({ products = [], onProductAdded }) {
             value={formData.purchasePrice}
             onChange={handleChange}
             className="w-full p-2 rounded bg-cyan-700 text-white border border-cyan-600"
-            placeholder="Enter purchase price"
             required
           />
         </div>
@@ -201,7 +200,6 @@ export default function AddProduct({ products = [], onProductAdded }) {
             value={formData.sellingPrice}
             onChange={handleChange}
             className="w-full p-2 rounded bg-cyan-700 text-white border border-cyan-600"
-            placeholder="Enter selling price"
             required
           />
         </div>
@@ -213,11 +211,10 @@ export default function AddProduct({ products = [], onProductAdded }) {
           </label>
           <input
             type="number"
-            name="quantity"
-            value={formData.quantity}
+            name="currentQuantity"
+            value={formData.currentQuantity}
             onChange={handleChange}
             className="w-full p-2 rounded bg-cyan-700 text-white border border-cyan-600"
-            placeholder="Enter quantity"
             required
           />
         </div>
@@ -229,11 +226,10 @@ export default function AddProduct({ products = [], onProductAdded }) {
           </label>
           <input
             type="number"
-            name="minQuantity"
-            value={formData.minQuantity}
+            name="minimumQuantity"
+            value={formData.minimumQuantity}
             onChange={handleChange}
             className="w-full p-2 rounded bg-cyan-700 text-white border border-cyan-600"
-            placeholder="Enter minimum quantity"
             required
           />
         </div>
@@ -251,7 +247,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
           />
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <div className="flex justify-center">
           <button
             type="submit"

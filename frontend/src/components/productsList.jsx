@@ -9,7 +9,6 @@ export default function ProductsList({ products }) {
 
   // ---- FILTER & SEARCH LOGIC ----
   const filteredProducts = useMemo(() => {
-    
   return products.filter(product => {
     const nameMatch = (product?.name ?? "")
       .toLowerCase()
@@ -20,9 +19,8 @@ export default function ProductsList({ products }) {
       .includes(searchTerm.toLowerCase());
 
     const categoryMatch =
-        category === "all" ||
-        (product.categoryId && product.categoryId.name === category);
-
+      category === "all" ||
+      (product.categoryId?.name === category);
 
     const price = Number(product?.sellingPrice ?? 0);
     const priceMatch =
@@ -30,12 +28,13 @@ export default function ProductsList({ products }) {
       (maxPrice === "" || price <= Number(maxPrice));
 
     const lowStockMatch = lowStockOnly
-      ? product.currentQuantity < product.minimumQuantity
+      ? Number(product.currentQuantity) < Number(product.minimumQuantity)
       : true;
 
     return (nameMatch || skuMatch) && categoryMatch && priceMatch && lowStockMatch;
   });
 }, [products, searchTerm, category, minPrice, maxPrice, lowStockOnly]);
+
 
   return (
     <div className="space-y-4">
@@ -100,7 +99,8 @@ export default function ProductsList({ products }) {
           >
             <img
                 className="w-48 h-48 object-cover mr-4 rounded mb-4"
-                src={product.imageUrl} alt={product.name} 
+                src={`http://localhost:5000${product.imageUrl}`}
+                alt={product.name} 
              />
             <div className="flex flex-cols-2 gap-8 justify-between">
                 <div>

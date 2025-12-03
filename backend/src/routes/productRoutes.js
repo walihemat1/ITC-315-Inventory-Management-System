@@ -14,15 +14,14 @@ import {
 import { authenticateUser } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/adminMiddleware.js";
 
-router.get("/", authenticateUser, getProducts);
+router.get("/", getProducts);
 router.get("/category/:category", authenticateUser, getProductsByCategory);
 router.get("/:id", authenticateUser, getProduct);
 router.get("/low-stock", authenticateUser, getLowStockItems);
 router.post(
   "/create",
   upload.single("image"),
-  authenticateUser,
-  isAdmin,
+
   createProduct
 );
 router.put(

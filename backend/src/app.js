@@ -56,7 +56,7 @@ app.use("/api/purchase", purchaseRoute);
 app.use("/api/dashboard", dashboardRoute);
 app.use("/api/report", reportRoute);
 
-app.use("/uploads/productImages", express.static("uploads/productImages"));
+app.use("/Uploads", express.static("uploads"));
 
 mongoose
   .connect(process.env.MONGO_URI)
