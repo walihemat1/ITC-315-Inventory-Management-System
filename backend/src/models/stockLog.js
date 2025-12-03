@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const StockLogSchema = new mongoose.Schema({
   productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
@@ -9,4 +9,4 @@ const StockLogSchema = new mongoose.Schema({
   referenceId: mongoose.Schema.Types.ObjectId, 
 }, { timestamps: true });
 
-module.exports = mongoose.model("StockLog", StockLogSchema);
+export default mongoose.model("StockLog", StockLogSchema);

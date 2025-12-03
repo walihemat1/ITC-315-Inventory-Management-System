@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const SupplierSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -8,4 +8,4 @@ const SupplierSchema = new mongoose.Schema({
   balance: { type: Number, default: 0 }, 
 }, { timestamps: true });
 
-module.exports = mongoose.model("Supplier", SupplierSchema);
+export default mongoose.model("Supplier", SupplierSchema);

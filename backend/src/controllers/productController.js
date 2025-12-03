@@ -73,6 +73,33 @@ export const getProductsByCategory = async (req, res) => {
   }
 };
 
+//get low-stock items bsed on minimumQuantity on each product
+// Get low-stock items based on minimumQuantity for each product
+export const getLowStockItems = async (req, res) => {
+  try {
+    const items = await Product.find({
+      $expr: { $lt: ["$currentQuantity", "$minimumQuantity"] }
+    })
+      .select("name sku currentQuantity minimumQuantity")
+      .sort({ currentQuantity: 1 });
+
+    return res.status(200).json({
+      success: true,
+      count: items.length,
+      data: items
+    });
+
+  } catch (error) {
+    console.error("Low-stock error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch low stock items",
+      error: error.message
+    });
+  }
+};
+
+
 // Get one product
 export const getProduct = async (req, res) => {
   try {

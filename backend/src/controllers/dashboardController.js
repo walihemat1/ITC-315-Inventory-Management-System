@@ -1,5 +1,5 @@
 import Product from "../models/productModel.js";
-import StockLog from "../models/stockLogModel.js";
+import StockLog from "../models/stockLog.js";
 
 /**
  * GET /api/dashboard/total-products

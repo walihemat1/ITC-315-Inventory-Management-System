@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const SettingSchema = new mongoose.Schema({
   shopName: String,
@@ -8,4 +8,5 @@ const SettingSchema = new mongoose.Schema({
   logoUrl: String,
 }, { timestamps: true });
 
-module.exports = mongoose.model("Setting", SettingSchema);
+
+export default mongoose.model("Setting", SettingSchema);
