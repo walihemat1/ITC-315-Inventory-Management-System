@@ -23,4 +23,5 @@ const fileFilter = (req, file, cb) => {
   else cb(new Error("Only image files are allowed"), false);
 };
 
-export const upload = multer({ storage, fileFilter });
+const upload = multer({ storage, fileFilter });
+export default upload;

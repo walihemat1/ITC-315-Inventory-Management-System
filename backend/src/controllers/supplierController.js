@@ -1,7 +1,7 @@
-import Supplier = from ("../models/supplierModel");
+import Supplier from "../models/supplierModel.js";
 
 // Create a supplier
-const createSupplier = async (req, res) => {
+export const createSupplier = async (req, res) => {
   try {
     const supplier = await Supplier.create(req.body);
     res.status(201).json(supplier);
@@ -11,7 +11,7 @@ const createSupplier = async (req, res) => {
 };
 
 // Get all suppliers
-const getSuppliers = async (req, res) => {
+export const getSuppliers = async (req, res) => {
   try {
     const suppliers = await Supplier.find({});
     res.status(200).json(suppliers);
@@ -21,7 +21,7 @@ const getSuppliers = async (req, res) => {
 };
 
 // Get a single supplier by ID
-const getSupplier = async (req, res) => {
+export const getSupplier = async (req, res) => {
   try {
     const { id } = req.params;
     const supplier = await Supplier.findById(id);
@@ -37,7 +37,7 @@ const getSupplier = async (req, res) => {
 };
 
 // Update a supplier
-const updateSupplier = async (req, res) => {
+export const updateSupplier = async (req, res) => {
   try {
     const { id } = req.params;
     const supplier = await Supplier.findByIdAndUpdate(id, req.body, {
@@ -55,7 +55,7 @@ const updateSupplier = async (req, res) => {
 };
 
 // Delete a supplier
-const deleteSupplier = async (req, res) => {
+export const deleteSupplier = async (req, res) => {
   try {
     const { id } = req.params;
     const supplier = await Supplier.findByIdAndDelete(id);
