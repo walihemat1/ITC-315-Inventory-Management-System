@@ -1,6 +1,8 @@
 import express from "express";
 import env from "dotenv";
 import mongoose from "mongoose";
+import cors from "cors";
+
 
 import productRoute from "./routes/productRoutes.js";
 import categoryRoute from "./routes/categoryRouter.js";
@@ -28,6 +30,14 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
+
+// OR to allow only your frontend:
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 //routes
 app.use("/api/products", productRoute);
