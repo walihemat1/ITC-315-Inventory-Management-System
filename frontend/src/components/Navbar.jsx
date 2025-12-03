@@ -26,7 +26,7 @@ export default function Navbar() {
   };
 
   return (
-      <div className="bg-teal-900 max-h-20 m-4 mt-0 rounded-br-lg rounded-bl-lg">
+      <div className="bg-teal-900 max-h-15">
         <div className="flex justify-between items-center px-8 py-4">
           <div className="justify-start">
             <h1 className="text-xl font-bold text-white">IMS</h1>

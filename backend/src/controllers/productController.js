@@ -5,7 +5,7 @@ export const createProduct = async (req, res) => {
   try {
     const { name, sku, createdBy, categoryId, supplierId } = req.body;
 
-    if (!name || !sku || !createdBy || !categoryId || !supplierId) {
+    if (!name || !sku || !categoryId || !supplierId) {
       return res.status(400).json({
         success: false,
         message:
@@ -25,7 +25,7 @@ export const createProduct = async (req, res) => {
     // Add image URL if uploaded
     let imageUrl = null;
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = `/uploads/productImages/${req.file.filename}`;
     }
 
     const product = await Product.create({
@@ -42,12 +42,16 @@ export const createProduct = async (req, res) => {
 // Get all products
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({})
+      .populate("categoryId", "name")
+      .populate("supplierId", "name"); // get only supplier name
+
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get products by category name
 export const getProductsByCategory = async (req, res) => {

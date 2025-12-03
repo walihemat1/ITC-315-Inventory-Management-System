@@ -1,27 +1,23 @@
-import multer from 'multer';
-import path from 'path';
+import fs from "fs";
+import path from "path";
+import multer from "multer";
 
-const storage= multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'uploads/productImages/');
-    },
+const uploadPath = path.join("uploads", "productImages");
 
-    filename: function(req,file,cb) {
-        const productName = req.body.name
-      ? req.body.name.replace(/\s+/g, "_").toLowerCase()
-      : "product";
+// Ensure folder exists
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+}
 
-        const ext = path.extname(file.originalname);
-
-        const filename = `${productName}_${Date.now()}${ext}`;
-        cb(null, filename);
-    },
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + ext);
+  },
 });
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) cb(null, true);
-  else cb(new Error("Only image files are allowed"), false);
-};
-
-const upload = multer({ storage, fileFilter });
+export const upload = multer({ storage });
 export default upload;
