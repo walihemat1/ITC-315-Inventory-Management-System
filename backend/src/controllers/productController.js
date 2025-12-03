@@ -42,12 +42,15 @@ export const createProduct = async (req, res) => {
 // Get all products
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({})
+      .populate("categoryId", "name"); // get only category name
+
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get products by category name
 export const getProductsByCategory = async (req, res) => {

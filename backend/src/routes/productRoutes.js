@@ -14,7 +14,7 @@ import {
 import { authenticateUser } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/adminMiddleware.js";
 
-router.get("/", getProducts);
+router.get("/", authenticateUser, getProducts);
 router.get("/category/:category", authenticateUser, getProductsByCategory);
 router.get("/:id", authenticateUser, getProduct);
 router.get("/low-stock", authenticateUser, getLowStockItems);
