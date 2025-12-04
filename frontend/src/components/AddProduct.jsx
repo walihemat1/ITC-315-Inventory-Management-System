@@ -98,13 +98,13 @@ export default function AddProduct({ products = [], onProductAdded }) {
   return (
     <div className="my-6 p-6 bg-cyan-800 rounded-lg shadow-md">
       <h2 className="text-xl font-bold text-white mb-4">Add New Product</h2>
-
+      <div className="border-b"></div>
       <form
-        className="bg-cyan-800 p-4 rounded-lg shadow-md"
+        className="bg-cyan-800 p-4 font-semibold rounded-lg shadow-md"
         onSubmit={handleSubmit}
       >
         {/* Product Name */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block text-white mb-2 min-w-[120px]">
             Product Name
           </label>
@@ -120,7 +120,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* SKU */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block text-white mb-2 min-w-[120px]">SKU</label>
           <input
             type="text"
@@ -134,7 +134,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Category */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block text-white mb-2 min-w-[120px]">
             Category
           </label>
@@ -155,7 +155,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Supplier */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block text-white mb-2 min-w-[120px]">
             Supplier
           </label>
@@ -175,7 +175,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Purchase Price */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block min-w-[120px] text-white mb-2">
             Purchase Price
           </label>
@@ -190,7 +190,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Selling Price */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block min-w-[120px] text-white mb-2">
             Selling Price
           </label>
@@ -205,7 +205,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Quantity */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block min-w-[120px] text-white mb-2">
             Quantity
           </label>
@@ -220,7 +220,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Minimum Quantity */}
-        <div className="mb-4 flex">
+        <div className="mb-4 grid md:flex">
           <label className="block min-w-[120px] text-white mb-2">
             Minimum Quantity
           </label>
@@ -235,7 +235,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Product Image */}
-        <div className="mb-4 flex items-center mx-auto justify-center">
+        <div className="mb-4 grid md:flex items-center mx-auto justify-center">
           <label className="block min-w-[120px] text-white mb-2">
             Product Image
           </label>
@@ -248,7 +248,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         </div>
 
         {/* Submit */}
-        <div className="flex justify-center">
+        <div className="flex py-3 justify-center">
           <button
             type="submit"
             className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded"

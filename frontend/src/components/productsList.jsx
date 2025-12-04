@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
+import {Pen} from 'lucide-react';
+import { Link } from "react-router-dom";
 
-export default function ProductsList({ products }) {
+export default function ProductsList({ products, onEditProduct }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
   const [minPrice, setMinPrice] = useState("");
@@ -34,7 +36,23 @@ export default function ProductsList({ products }) {
     return (nameMatch || skuMatch) && categoryMatch && priceMatch && lowStockMatch;
   });
 }, [products, searchTerm, category, minPrice, maxPrice, lowStockOnly]);
+  // Extract unique categories
+  const uniqueCategories = [
+    ...new Map(
+      products
+        .filter((p) => p.categoryId)
+        .map((p) => [p.categoryId._id, p.categoryId])
+    ).values(),
+  ];
 
+  // Extract unique suppliers
+  const uniqueSuppliers = [
+    ...new Map(
+      products
+        .filter((p) => p.supplierId)
+        .map((p) => [p.supplierId._id, p.supplierId])
+    ).values(),
+  ];
 
   return (
     <div className="space-y-4">
@@ -48,7 +66,7 @@ export default function ProductsList({ products }) {
       />
 
       {/* FILTERS */}
-      <div className="flex gap-3">
+      <div className="grid md:flex gap-3 space-x-2 mb-4 space-y-2">
         {/* Category Filter */}
         <select
           className="border p-2 rounded bg-cyan-700 text-white"
@@ -63,7 +81,8 @@ export default function ProductsList({ products }) {
         </select>
 
         {/* Price Range */}
-        <input
+        <div className="flex gap-2 justify-center">
+          <input
           type="number"
           placeholder="Min Price"
           value={minPrice}
@@ -78,6 +97,7 @@ export default function ProductsList({ products }) {
           onChange={(e) => setMaxPrice(e.target.value)}
           className="border p-2 rounded w-24 bg-cyan-700 text-white"
         />
+        </div>
 
         {/* Low Stock Toggle */}
         <label className="flex items-center gap-2 bg-cyan-700 text-white p-2 rounded border">
@@ -93,10 +113,27 @@ export default function ProductsList({ products }) {
       {/* PRODUCT LIST */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredProducts.map(product => (
+          
           <div
             key={product._id}
-            className="bg-cyan-800 hover:scale-103 border p-4 grid items-center justify-center rounded shadow-sm"
+            className="bg-cyan-800 justify-center hover:scale-103 border p-2 md:p-4 grid rounded shadow-sm"
           >
+            <div className="flex justify-end mb-2 h-0 mr-[-10px]">
+              <Link
+                to="#"
+                onClick={(e) => {
+                  e.preventDefault();  // stops navigation
+                  onEditProduct(product, uniqueCategories, uniqueSuppliers );
+                  console.log(product);
+                }}
+                
+                className="mt-2 h-8 w-8 hover:scale-105"
+              >
+                <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
+              </Link>
+
+
+            </div>
             <img
                 className="w-48 h-48 object-cover mr-4 rounded mb-4"
                 src={`http://localhost:5000${product.imageUrl}`}
