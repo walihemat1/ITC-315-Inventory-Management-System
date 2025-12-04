@@ -30,6 +30,14 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 5,
     },
+    purchasePrice: {
+      type: Number,
+      default: 0,
+    },
+    sellingPrice: {
+      type: Number,
+      default: 0,
+    },
     lowStock: {
       type: Boolean,
       default: false,

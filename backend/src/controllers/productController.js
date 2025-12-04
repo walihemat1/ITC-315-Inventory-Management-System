@@ -144,7 +144,7 @@ export const updateProduct = async (req, res) => {
 
     // If new image uploaded → replace imageUrl
     if (req.file) {
-      updateData.imageUrl = `/uploads/${req.file.filename}`;
+      updateData.imageUrl = `/uploads/productImages/${req.file.filename}`;
     }
 
     const product = await Product.findByIdAndUpdate(id, updateData, {

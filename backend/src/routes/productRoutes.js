@@ -27,8 +27,6 @@ router.post(
 router.put(
   "/:id",
   upload.single("image"),
-  authenticateUser,
-  isAdmin,
   updateProduct
 );
 router.delete("/:id", authenticateUser, isAdmin, deleteProduct);

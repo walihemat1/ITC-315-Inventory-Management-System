@@ -2,6 +2,7 @@ import './App.css'
 
 import Dashboard from './pages/Dashboard';
 import ProductsPage from './pages/Products';
+import PurchasesPage from './pages/Purchases';
 
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -17,6 +18,11 @@ function App() {
           <Route
             path="/products"
             element={<ProductsPage />}
+          />
+
+          <Route
+            path="/purchases"
+            element= {<PurchasesPage />}
           />
         
 

@@ -53,3 +53,17 @@ export const createPurchase = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getPurchases = async (req, res) => {
+  try {
+    const purchases = await Purchase.find()
+      .populate("items.productId", "name");
+
+    if (purchases){
+      res.status(200).json(purchases);
+    }
+
+  } catch (error) {
+    res.status(400).json({message: error.message});
+  }
+};
