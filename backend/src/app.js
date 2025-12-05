@@ -1,22 +1,23 @@
 import express from "express";
 import env from "dotenv";
 import mongoose from "mongoose";
+import cors from "cors";
+
 
 import productRoute from "./routes/productRoutes.js";
 import categoryRoute from "./routes/categoryRouter.js";
 import saleRoute from "./routes/salesRoutes.js";
-import purchaseRoute from "./routes/purchaseRoutes.js";
+import purchaseRoute from "./routes/purchaseRouter.js";
 import authRoute from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoutes.js";
 import adminUserRoute from "./routes/adminUserRouter.js";
 import adjustmentRoute from "./routes/adjustmentRouter.js";
-import categoryRoute from "./routes/categoryRouter.js";
-import saleRoute from "./routes/saleRouter.js";
-import settingRoute from "./routes/settingRouer.js";
+import settingRoute from "./routes/settingRouter.js";
 import stockLogRoute from "./routes/stockLogRouter.js";
 import supplierRoute from "./routes/supplierRouter.js";
 import dashboardRoute from "./routes/dashboardRouter.js";
 import reportRoute from "./routes/reportRouter.js";
+import connectDB from "./config/db.js";
 
 env.config();
 
@@ -29,6 +30,14 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
+
+// OR to allow only your frontend:
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 //routes
 app.use("/api/products", productRoute);
@@ -47,7 +56,7 @@ app.use("/api/purchase", purchaseRoute);
 app.use("/api/dashboard", dashboardRoute);
 app.use("/api/report", reportRoute);
 
-app.use("/uploads/productImages", express.static("uploads/productImages"));
+app.use("/Uploads", express.static("uploads"));
 
 mongoose
   .connect(process.env.MONGO_URI)

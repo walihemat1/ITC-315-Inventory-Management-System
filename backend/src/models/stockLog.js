@@ -12,5 +12,4 @@ const StockLogSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const StockLog = mongoose.model("StockLog", StockLogSchema);
-export default StockLog;
+export default mongoose.model("StockLog", StockLogSchema);

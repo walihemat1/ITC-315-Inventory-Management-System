@@ -1,6 +1,6 @@
-import Product from "../models/productModel.js";
-import StockLog from "../models/stockLogModel.js";
-import updateLowStock from "../utils/updateLowStock.js";
+import Product from "../models/productModel";
+import StockLog from "../models/stockLogModel";
+import updateLowStock from "../utils/updateLowStock";
 
 export const adjustStock = async (req, res) => {
   try {

@@ -5,7 +5,7 @@ export const createProduct = async (req, res) => {
   try {
     const { name, sku, createdBy, categoryId, supplierId } = req.body;
 
-    if (!name || !sku || !createdBy || !categoryId || !supplierId) {
+    if (!name || !sku || !categoryId || !supplierId) {
       return res.status(400).json({
         success: false,
         message:
@@ -25,7 +25,7 @@ export const createProduct = async (req, res) => {
     // Add image URL if uploaded
     let imageUrl = null;
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = `/uploads/productImages/${req.file.filename}`;
     }
 
     const product = await Product.create({
@@ -42,12 +42,16 @@ export const createProduct = async (req, res) => {
 // Get all products
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({})
+      .populate("categoryId", "name")
+      .populate("supplierId", "name"); // get only supplier name
+
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get products by category name
 export const getProductsByCategory = async (req, res) => {
@@ -72,6 +76,33 @@ export const getProductsByCategory = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+//get low-stock items bsed on minimumQuantity on each product
+// Get low-stock items based on minimumQuantity for each product
+export const getLowStockItems = async (req, res) => {
+  try {
+    const items = await Product.find({
+      $expr: { $lt: ["$currentQuantity", "$minimumQuantity"] }
+    })
+      .select("name sku currentQuantity minimumQuantity")
+      .sort({ currentQuantity: 1 });
+
+    return res.status(200).json({
+      success: true,
+      count: items.length,
+      data: items
+    });
+
+  } catch (error) {
+    console.error("Low-stock error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch low stock items",
+      error: error.message
+    });
+  }
+};
+
 
 // Get one product
 export const getProduct = async (req, res) => {
@@ -113,7 +144,7 @@ export const updateProduct = async (req, res) => {
 
     // If new image uploaded → replace imageUrl
     if (req.file) {
-      updateData.imageUrl = `/uploads/${req.file.filename}`;
+      updateData.imageUrl = `/uploads/productImages/${req.file.filename}`;
     }
 
     const product = await Product.findByIdAndUpdate(id, updateData, {

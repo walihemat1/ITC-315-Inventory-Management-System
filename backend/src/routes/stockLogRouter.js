@@ -2,8 +2,7 @@ import express from "express";
 import {
   getStockInHistory,
   getStockOutHistory,
-} from "../controllers/stockLogController";
-import { authenticateUser } from "../middleware/authMiddleware";
+} from "../controllers/stockLogController.js";
 
 const router = express.Router();
 
