@@ -9,6 +9,7 @@ import {
   BadgeDollarSign,
   ChartCandlestick,
   UserCog,
+  FolderTree,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -26,6 +27,11 @@ export default function Sidebar() {
       name: "Products",
       icon: Warehouse,
       path: "/products",
+    },
+    {
+      name: "Categories",
+      icon: FolderTree,
+      path: "/categories",
     },
   ];
 
