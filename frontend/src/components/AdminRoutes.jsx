@@ -1,3 +1,4 @@
+// src/components/AdminRoutes.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminDashboard from "../pages/AdminDashboard";
@@ -8,16 +9,18 @@ import SupplierManager from "../pages/SupplierManager"
 import CustomerManager from "../pages/CustomerManager";
 import EditCustomerPage from "./EditCustomerPage";
 import AddCustomerPage from "./AddCustomerPage";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminUsersPage from "../pages/admin/AdminUser";
+// import ProductsPage from "../pages/Products";
 import PurchasesPage from "../pages/Purchases";
-// add more admin-only pages as needed
 
 export default function AdminRoutes() {
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
       <Routes>
-        {/* /admin/dashboard */}
         <Route path="dashboard" element={<AdminDashboard />} />
-
+        <Route path="users" element={<AdminUsersPage />} />
+        {/* <Route path="products" element={<ProductsPage />} /> */}
         <Route path="purchases" element={<PurchasesPage />} />
 
         <Route path="suppliers" element={<SupplierManager/>} />
@@ -32,6 +35,7 @@ export default function AdminRoutes() {
         
         <Route path="customers" element={<CustomerManager/>} />
 
+        {/* Default: /admin -> /admin/dashboard */}
         <Route path="*" element={<Navigate to="dashboard" replace />} />
       </Routes>
     </ProtectedRoute>
