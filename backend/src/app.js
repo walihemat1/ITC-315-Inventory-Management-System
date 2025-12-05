@@ -6,7 +6,8 @@ import cookieParser from "cookie-parser";
 
 import productRoute from "./routes/productRoutes.js";
 import categoryRoute from "./routes/categoryRouter.js";
-import saleRoute from "./routes/salesRoutes.js";
+import saleRoute from "./routes/saleRouter.js";
+import salesRoute from "./routes/salesRoutes.js";
 import purchaseRoute from "./routes/purchaseRouter.js";
 import authRoute from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoutes.js";
@@ -18,6 +19,7 @@ import supplierRoute from "./routes/supplierRouter.js";
 import dashboardRoute from "./routes/dashboardRouter.js";
 import reportRoute from "./routes/reportRouter.js";
 import connectDB from "./config/db.js";
+import customerRoutes from './routes/customerRoutes.js';
 
 dotenv.config({ path: "./src/.env" });
 
@@ -49,10 +51,12 @@ app.use("/api/admin/user", adminUserRoute);
 app.use("/api/stock-adjustment", adjustmentRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/sale", saleRoute);
+app.use("/api/sales", salesRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/setting", settingRoute);
 app.use("/api/stock-history", stockLogRoute);
 app.use("/api/supplier", supplierRoute);
+app.use("/api/customer", customerRoutes);
 app.use("/api/purchase", purchaseRoute);
 app.use("/api/dashboard", dashboardRoute);
 app.use("/api/report", reportRoute);

@@ -86,7 +86,7 @@ export const getAllSales = async (req, res) => {
       .populate("sellerId", "name email")
       .populate("items.productId", "name sku");
 
-    res.json({ success: true, data: sales });
+    res.json(sales);
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
