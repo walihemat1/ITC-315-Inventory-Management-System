@@ -1,5 +1,5 @@
 import express from "express";
-import env from "dotenv";
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -19,7 +19,7 @@ import dashboardRoute from "./routes/dashboardRouter.js";
 import reportRoute from "./routes/reportRouter.js";
 import connectDB from "./config/db.js";
 
-env.config();
+dotenv.config({ path: "./src/.env" });
 
 const app = express();
 app.use(express.json());
@@ -58,6 +58,8 @@ app.use("/api/dashboard", dashboardRoute);
 app.use("/api/report", reportRoute);
 
 app.use("/Uploads", express.static("uploads"));
+
+console.log("dfdfdfdf", process.env.MONGO_URI);
 
 mongoose
   .connect(process.env.MONGO_URI)

@@ -8,9 +8,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { loading, error } = useSelector((state) => state.auth);
-
-  const from = location.state?.from?.pathname || "/Dashboard"; // redirect after login
+  const { loading, error, role } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -26,16 +24,26 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      await dispatch(
+      const result = await dispatch(
         loginUser({
           email: formData.email,
           password: formData.password,
         })
       ).unwrap();
 
-      navigate(from, { replace: true });
+      const userRole = result.role?.toLowerCase();
+
+      console.log("role", userRole);
+
+      // Redirect based on role
+      if (userRole === "admin") {
+        navigate("/admin/dashboard", { replace: true });
+      } else if (userRole === "staff" || userRole === "manager") {
+        navigate("/staff/dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     } catch (err) {
-      // error is handled in Redux, nothing else needed here
       console.error("Login error:", err);
     }
   };

@@ -5,10 +5,12 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   const { user, role } = useSelector((state) => state.auth);
   const location = useLocation();
 
+  // Not logged in -> go to login
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // Role restriction
   if (allowedRoles && allowedRoles.length > 0) {
     if (!allowedRoles.includes(role)) {
       return <Navigate to="/unauthorized" replace />;

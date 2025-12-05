@@ -3,6 +3,7 @@ import {
   getStockInHistory,
   getStockOutHistory,
 } from "../controllers/stockLogController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

@@ -33,8 +33,8 @@ export const loginUser = createAsyncThunk(
       const user = {
         id: data.data.id,
         email: data.data.email,
-        username: data.data.username,
-        // role: data.data.role, // uncomment once backend sends role
+        fullName: data.data.fullName,
+        role: data.data.role,
       };
 
       const token = data.token;

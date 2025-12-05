@@ -1,10 +1,11 @@
-// src/App.js
 import "./App.css";
 
-import Dashboard from "./pages/Dashboard";
-import ProductsPage from "./pages/Products";
-import PurchasesPage from "./pages/Purchases";
 import Login from "./pages/auth/Login";
+import Unauthorized from "./pages/auth/Unauthorized";
+import ProductsPage from "./pages/Products";
+
+import AdminRoutes from "./components/AdminRoutes";
+import StaffRoutes from "./components/StaffRoutes";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import {
@@ -20,37 +21,26 @@ function App() {
       <Routes>
         {/* Public */}
         <Route path="/login" element={<Login />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* Protected routes */}
-        <Route
-          path="/Dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+        {/* Admin-only route group: /admin/* */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
 
+        {/* Staff-only route group: /staff/* */}
+        <Route path="/staff/*" element={<StaffRoutes />} />
+
+        {/* Protected single route (example: both admin & staff can see products) */}
         <Route
           path="/products"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["admin", "staff", "manager"]}>
               <ProductsPage />
             </ProtectedRoute>
           }
         />
 
-        <Route
-          path="/purchases"
-          element={
-            <ProtectedRoute>
-              <PurchasesPage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Default redirect to Dashboard */}
-        <Route path="/" element={<Navigate to="/Dashboard" replace />} />
+        {/* Default root redirect */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

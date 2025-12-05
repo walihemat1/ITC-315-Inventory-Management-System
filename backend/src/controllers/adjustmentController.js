@@ -1,5 +1,5 @@
 import Product from "../models/productModel.js";
-import StockLog from "../models/stockLogModel.js";
+import StockLog from "../models/stockLog.js";
 import updateLowStock from "../utils/updateLowStock.js";
 
 export const adjustStock = async (req, res) => {
