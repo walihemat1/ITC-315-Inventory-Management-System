@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 
 import productRoute from "./routes/productRoutes.js";
 import categoryRoute from "./routes/categoryRouter.js";
-import saleRoute from "./routes/saleRouter.js";
 import salesRoute from "./routes/salesRoutes.js";
 import purchaseRoute from "./routes/purchaseRouter.js";
 import authRoute from "./routes/authRoutes.js";
@@ -50,7 +49,6 @@ app.use("/api/user", userRoute);
 app.use("/api/admin/user", adminUserRoute);
 app.use("/api/stock-adjustment", adjustmentRoute);
 app.use("/api/category", categoryRoute);
-app.use("/api/sale", saleRoute);
 app.use("/api/sales", salesRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/setting", settingRoute);
