@@ -4,7 +4,7 @@ import {
   getSettings,
   updateSettings,
   createSetting,
-} from "../controllers/settingsController.js";
+} from "../controllers/settingController.js";
 import { authenticateUser } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/adminMiddleware.js";
 
