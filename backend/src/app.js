@@ -18,7 +18,7 @@ import supplierRoute from "./routes/supplierRouter.js";
 import dashboardRoute from "./routes/dashboardRouter.js";
 import reportRoute from "./routes/reportRouter.js";
 import connectDB from "./config/db.js";
-import customerRoutes from './routes/customerRoutes.js';
+import customerRoutes from "./routes/customerRoutes.js";
 
 dotenv.config({ path: "./src/.env" });
 
@@ -60,8 +60,6 @@ app.use("/api/dashboard", dashboardRoute);
 app.use("/api/report", reportRoute);
 
 app.use("/Uploads", express.static("uploads"));
-
-console.log("dfdfdfdf", process.env.MONGO_URI);
 
 mongoose
   .connect(process.env.MONGO_URI)

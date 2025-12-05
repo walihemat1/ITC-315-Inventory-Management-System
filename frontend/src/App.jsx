@@ -6,6 +6,8 @@ import SalesPage from "./pages/Sales";
 import Login from "./pages/auth/Login";
 import Unauthorized from "./pages/auth/Unauthorized";
 import CategoryPage from "./pages/category/Category";
+import StockFlowPage from "./pages/stock/StockFlow";
+import StockAdjustmentPage from "./pages/stock/StockAdjustment";
 
 import AdminRoutes from "./components/AdminRoutes";
 import StaffRoutes from "./components/StaffRoutes";
@@ -48,6 +50,24 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["admin", "staff", "manager"]}>
               <CategoryPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/stockflow"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "staff", "manager"]}>
+              <StockFlowPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/stock-adjustment"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "manager"]}>
+              <StockAdjustmentPage />
             </ProtectedRoute>
           }
         />

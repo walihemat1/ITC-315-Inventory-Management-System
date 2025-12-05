@@ -5,10 +5,14 @@ import {
   Warehouse,
   BadgeDollarSign,
   LayoutDashboard,
-  ChartCandlestick,
+  FolderTree,
   User2Icon,
   UserIcon,
-  UserCog
+  UserCog,
+  Settings2,
+  Activity,
+  Cog,
+  BarChart3,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -33,6 +37,11 @@ export default function Sidebar() {
       icon: FolderTree,
       path: "/categories",
     },
+    {
+      name: "Stock Flow",
+      icon: Activity,
+      path: "/stockflow",
+    },
   ];
 
   const adminItems = [
@@ -51,18 +60,28 @@ export default function Sidebar() {
       icon: UserCog,
       path: "/admin/users",
     },
+    {
+      name: "Adjust Stock",
+      icon: Settings2,
+      path: "/stock-adjustment",
+    },
+    {
+      name: "Reports",
+      icon: BarChart3,
+      path: "/admin/reports",
+    },
+    {
+      name: "Settings",
+      icon: Cog,
+      path: "/admin/settings",
+    },
   ];
 
   const staffItems = [
     {
       name: "Sales",
       icon: BadgeDollarSign,
-      path: "/staff/sales",
-    },
-    {
-      name: "Stock Flow",
-      icon: ChartCandlestick,
-      path: "/staff/stockflow",
+      path: "/sales",
     },
   ];
 
@@ -75,14 +94,14 @@ export default function Sidebar() {
     navItems.push({
       name: "Suppliers",
       path: "/admin/suppliers",
-      icon: User2Icon
+      icon: User2Icon,
     });
   }
   if (role === "admin") {
     navItems.push({
       name: "Customers",
       path: "/admin/customers",
-      icon: UserIcon
+      icon: UserIcon,
     });
   }
 
@@ -97,7 +116,10 @@ export default function Sidebar() {
   }, [location.pathname]);
 
   return (
-    <div className="md:w-52 bg-teal-900 m-4 md:ml-0 rounded-lg py-4 px-0 max-h-78">
+    <div
+      className="md:w-52 bg-teal-900 m-4 md:ml-0 rounded-lg py-4 px-0 
+     max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-700 scrollbar-track-teal-900"
+    >
       <nav>
         <ul className="grid grid-cols-1 gap-1">
           {navItems.map((item) => {

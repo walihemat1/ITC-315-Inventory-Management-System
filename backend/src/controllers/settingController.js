@@ -5,11 +5,19 @@ export const createSetting = async (req, res) => {
     const { shopName, address, currency, taxRate, logUrl } = req.body;
 
     // check all fields
-    if (!shopName || !address || !currency || !!taxRate || logUrl)
+    if (
+      !shopName ||
+      !address ||
+      !currency ||
+      taxRate === undefined ||
+      taxRate === null ||
+      !logoUrl
+    ) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
+    }
 
     // create setting
     const setting = await Setting.create(req.body);
