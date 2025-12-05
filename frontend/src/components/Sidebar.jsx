@@ -6,6 +6,8 @@ import {
   BadgeDollarSign,
   LayoutDashboard,
   ChartCandlestick,
+  User2Icon,
+  UserIcon
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -24,6 +26,21 @@ export default function Sidebar() {
     { name: "Sales", icon: BadgeDollarSign, path: "/admin/sales" },
     { name: "Stock Flow", icon: ChartCandlestick },
   ];
+
+  if (role === "admin") {
+    navItems.push({
+      name: "Suppliers",
+      path: "/admin/suppliers",
+      icon: User2Icon
+    });
+  }
+  if (role === "admin") {
+    navItems.push({
+      name: "Customers",
+      path: "/admin/customers",
+      icon: UserIcon
+    });
+  }
 
   useEffect(() => {
     const currentPath = location.pathname.split("/")[1];
