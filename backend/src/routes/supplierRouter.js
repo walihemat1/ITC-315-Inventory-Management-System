@@ -9,7 +9,7 @@ import {
 } from "../controllers/supplierController.js";
 
 router.get("/", getSuppliers);
-router.put("/:id", getSupplier);
+router.get("/:id", getSupplier);
 router.post("/", createSupplier);
 router.put("/:id", updateSupplier);
 router.delete("/:id", deleteSupplier);
