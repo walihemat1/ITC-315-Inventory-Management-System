@@ -7,7 +7,8 @@ import {
   LayoutDashboard,
   ChartCandlestick,
   User2Icon,
-  UserIcon
+  UserIcon,
+  UserCog
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
