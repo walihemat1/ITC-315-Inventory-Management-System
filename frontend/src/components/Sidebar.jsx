@@ -28,6 +28,11 @@ export default function Sidebar() {
       icon: Warehouse,
       path: "/products",
     },
+    {
+      name: "Categories",
+      icon: FolderTree,
+      path: "/categories",
+    },
   ];
 
   const adminItems = [

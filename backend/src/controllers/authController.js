@@ -68,8 +68,10 @@ export const login = async (req, res) => {
     const token = generateToken(res, user._id);
 
     res.cookie("token", token, {
-      maxAge: 24 * 7 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: process.env.NODE_ENV === "production" ? true : false,
+      sameSite: "lax",
+      path: "/api",
     });
 
     res.status(200).json({
