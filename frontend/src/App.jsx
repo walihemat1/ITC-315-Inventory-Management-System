@@ -1,8 +1,10 @@
 import "./App.css";
 
+import ProductsPage from './pages/Products';
+import PurchasesPage from './pages/Purchases';
+import SalesPage from './pages/Sales';
 import Login from "./pages/auth/Login";
 import Unauthorized from "./pages/auth/Unauthorized";
-import ProductsPage from "./pages/Products";
 
 import AdminRoutes from "./components/AdminRoutes";
 import StaffRoutes from "./components/StaffRoutes";
@@ -23,6 +25,16 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
+          <Route
+            path="/purchases"
+            element= {<PurchasesPage />}
+          />
+          <Route 
+          path="/sales"
+          element={<SalesPage />}
+          />
+        
+        {/* Admin-only route group: /admin/* */}
         <Route path="/admin/*" element={<AdminRoutes />} />
 
         <Route path="/staff/*" element={<StaffRoutes />} />
