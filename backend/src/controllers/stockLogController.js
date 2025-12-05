@@ -1,4 +1,4 @@
-import StockLog from "../models/stockLogModel");
+import StockLog from "../models/stockLogModel.js";
 
 export const getStockInHistory = async (req, res) => {
   try {

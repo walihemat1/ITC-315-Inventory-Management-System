@@ -1,11 +1,15 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const SettingSchema = new mongoose.Schema({
-  shopName: String,
-  address: String,
-  currency: { type: String, default: "USD" },
-  taxRate: { type: Number, default: 0 },
-  logoUrl: String,
-}, { timestamps: true });
+const SettingSchema = new mongoose.Schema(
+  {
+    shopName: String,
+    address: String,
+    currency: { type: String, default: "USD" },
+    taxRate: { type: Number, default: 0 },
+    logoUrl: String,
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Setting", SettingSchema);
+const Setting = mongoose.model("Setting", SettingSchema);
+export default Setting;

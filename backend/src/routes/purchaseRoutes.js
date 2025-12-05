@@ -4,10 +4,13 @@ import {
   getAllPurchases,
   getPurchaseById,
   updatePurchase,
-  deletePurchase
+  deletePurchase,
 } from "../controllers/purchaseController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+router.use(authenticateUser);
 
 router.post("/", createPurchase);
 router.get("/", getAllPurchases);

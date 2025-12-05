@@ -1,7 +1,7 @@
-import Purchase from "../models/purchaseModel"
-import Product from "../models/productModel"
-import StockLog from "../models/stockLogModel"
-import updateLowStock from "../utils/updateLowStock"
+import Purchase from "../models/purchaseModel.js";
+import Product from "../models/productModel.js";
+import StockLog from "../models/stockLogModel.js";
+import updateLowStock from "../utils/updateLowStock.js";
 
 export const createPurchase = async (req, res) => {
   try {
@@ -12,7 +12,8 @@ export const createPurchase = async (req, res) => {
     // Loop through items
     for (const item of items) {
       const product = await Product.findById(item.productId);
-      if (!product) return res.status(404).json({ message: "Product not found" });
+      if (!product)
+        return res.status(404).json({ message: "Product not found" });
 
       const prevQty = product.currentQuantity;
       const newQty = prevQty + item.quantity;
@@ -48,7 +49,6 @@ export const createPurchase = async (req, res) => {
     });
 
     res.status(201).json(purchase);
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

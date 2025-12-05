@@ -4,10 +4,13 @@ import {
   getAllSales,
   getSaleById,
   updateSale,
-  deleteSale
+  deleteSale,
 } from "../controllers/salesController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+router.use(authenticateUser);
 
 router.post("/", createSale);
 router.get("/", getAllSales);

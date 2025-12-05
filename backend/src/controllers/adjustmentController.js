@@ -1,6 +1,6 @@
-import Product from "../models/productModel"
-import StockLog from "../models/stockLogModel"
-import updateLowStock from "../utils/updateLowStock";
+import Product from "../models/productModel.js";
+import StockLog from "../models/stockLogModel.js";
+import updateLowStock from "../utils/updateLowStock.js";
 
 export const adjustStock = async (req, res) => {
   try {
@@ -27,7 +27,6 @@ export const adjustStock = async (req, res) => {
     });
 
     res.status(200).json({ message: "Stock adjusted", product });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
