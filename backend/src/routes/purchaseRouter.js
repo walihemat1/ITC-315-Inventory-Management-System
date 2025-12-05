@@ -3,7 +3,6 @@ import {
   createPurchase,
   getPurchases,
 } from "../controllers/purchaseController.js";
-import { createPurchase } from "../controllers/purchaseController.js";
 import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

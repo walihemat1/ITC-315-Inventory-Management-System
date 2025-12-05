@@ -14,6 +14,4 @@ router.post("/", createSupplier);
 router.put("/:id", updateSupplier);
 router.delete("/:id", deleteSupplier);
 
-module.exports = router;
-
 export default router;
