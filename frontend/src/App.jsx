@@ -1,12 +1,10 @@
 import "./App.css";
 
-import Dashboard from './pages/Dashboard';
 import ProductsPage from './pages/Products';
 import PurchasesPage from './pages/Purchases';
 import SalesPage from './pages/Sales';
 import Login from "./pages/auth/Login";
 import Unauthorized from "./pages/auth/Unauthorized";
-import ProductsPage from "./pages/Products";
 
 import AdminRoutes from "./components/AdminRoutes";
 import StaffRoutes from "./components/StaffRoutes";

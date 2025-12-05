@@ -3,7 +3,9 @@ import User from "../models/userModel.js";
 
 export const authenticateUser = async (req, res, next) => {
   try {
-    const token = res.cookies.token;
+    const token = req.cookies.token;
+    
+
     if (!token)
       return res.status(401).json({
         success: false,

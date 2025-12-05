@@ -27,19 +27,28 @@ export default function SalesPage() {
       fetchCustomers();
     }, []);
   useEffect(() => {
-    const fetchSales = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/Sales");
-        const data = await response.json();
-        setSales(data);
-        console.log(Sales)
-      } catch (error) {
-        console.error("Error fetching Sales:", error);
-      }
-    };
+  const fetchSales = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/Sales", {
+        method: "GET",
+        credentials: "include",   // <-- THIS SENDS COOKIES!
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    fetchSales();
-  }, []);
+      const data = await response.json();
+      setSales(data);
+      console.log(data);
+
+    } catch (error) {
+      console.error("Error fetching Sales:", error);
+    }
+  };
+
+  fetchSales();
+}, []);
+
 
   // Build unique category and supplier lists
   const [uniqueCategories, setUniqueCategories] = useState([]);
