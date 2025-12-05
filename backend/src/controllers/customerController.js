@@ -41,7 +41,7 @@ export const getCustomerById = async (req, res) => {
     if (!customer)
       return res.status(404).json({ success: false, message: "Customer not found" });
 
-    res.json({ success: true, data: customer });
+    res.json(customer);
   } catch (error) {
     console.error("Get Customer Error:", error);
     res.status(500).json({ success: false, message: "Server error", error: error.message });
