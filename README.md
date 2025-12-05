@@ -71,21 +71,37 @@ It helps ensure that the business always knows what items are available, when to
 ## Project Structure
 
 │
+
 ├── docs/
+
 │ ├── README.md
+
 │ ├── product-backlog.md
+
 │ ├── user-stories.md
+
 │ ├── srs.md
+
 │ ├── sprint-plan.md
+
 │ ├── sprint-backlog-sprint-1.md
+
 │ ├── sprint-backlog-sprint-2.md
+
 │ ├── architecture.md
+
 │ ├── use-case-diagram.md
+
 │ ├── er-diagram.md
+
 │ └── class-diagram.md
+
 │
+
 ├── frontend/ (React code)
+
 ├── backend/ (Node/Express code)
+
 └── README.md
 
 ## Roles in the Project

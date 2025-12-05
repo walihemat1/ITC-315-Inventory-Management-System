@@ -1,8 +1,8 @@
 import express from "express";
-import env from "dotenv";
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-
+import cookieParser from "cookie-parser";
 
 import productRoute from "./routes/productRoutes.js";
 import categoryRoute from "./routes/categoryRouter.js";
@@ -21,7 +21,7 @@ import reportRoute from "./routes/reportRouter.js";
 import connectDB from "./config/db.js";
 import customerRoutes from './routes/customerRoutes.js';
 
-env.config();
+dotenv.config({ path: "./src/.env" });
 
 const app = express();
 app.use(express.json());
@@ -32,14 +32,15 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(cors());
+app.use(cookieParser());
 
 // OR to allow only your frontend:
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 //routes
 app.use("/api/products", productRoute);
@@ -61,6 +62,8 @@ app.use("/api/dashboard", dashboardRoute);
 app.use("/api/report", reportRoute);
 
 app.use("/Uploads", express.static("uploads"));
+
+console.log("dfdfdfdf", process.env.MONGO_URI);
 
 mongoose
   .connect(process.env.MONGO_URI)

@@ -1,5 +1,5 @@
-import Sale from "../models/saleModel.js";
 import mongoose from "mongoose";
+import Sale from "../models/saleModel.js";
 import Product from "../models/productModel.js";
 import Customer from "../models/customerModel.js";
 
@@ -11,10 +11,17 @@ export const createSale = async (req, res) => {
   try {
     const { sellerId, customerId, items, totalAmount, amountPaid } = req.body;
 
-    if (!sellerId || !customerId || !items || items.length === 0 || !totalAmount || !amountPaid) {
+    if (
+      !sellerId ||
+      !customerId ||
+      !items ||
+      items.length === 0 ||
+      !totalAmount ||
+      !amountPaid
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields"
+        message: "Missing required fields",
       });
     }
 
@@ -58,16 +65,15 @@ export const createSale = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      data: savedSale
+      data: savedSale,
     });
-
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
 
     res.status(400).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -89,10 +95,11 @@ export const getAllSales = async (req, res) => {
 // Get a single sale by ID
 export const getSaleById = async (req, res) => {
   const { id } = req.params;
-  if (!id){
+  if (!id) {
     return res.status(400).json({
       success: false,
-      message: "Sale ID is required" });
+      message: "Sale ID is required",
+    });
   }
   try {
     const sale = await Sale.findById(id)
@@ -101,7 +108,9 @@ export const getSaleById = async (req, res) => {
       .populate("items.productId");
 
     if (!sale) {
-      return res.status(404).json({ success: false, message: "Sale not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Sale not found" });
     }
 
     res.json({ success: true, data: sale });
@@ -121,7 +130,7 @@ export const updateSale = async (req, res) => {
     if (!id) {
       return res.status(400).json({
         success: false,
-        message: "Sale ID is required"
+        message: "Sale ID is required",
       });
     }
 
@@ -130,7 +139,7 @@ export const updateSale = async (req, res) => {
     if (!oldSale) {
       return res.status(404).json({
         success: false,
-        message: "Sale not found"
+        message: "Sale not found",
       });
     }
 
@@ -144,11 +153,10 @@ export const updateSale = async (req, res) => {
     }
 
     // Step 2: Update sale
-    const updatedSale = await Sale.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true, session }
-    );
+    const updatedSale = await Sale.findByIdAndUpdate(id, req.body, {
+      new: true,
+      session,
+    });
 
     // Step 3: Subtract new stock
     for (const item of updatedSale.items) {
@@ -160,12 +168,21 @@ export const updateSale = async (req, res) => {
     }
 
     // Step 4: Update customer balance
-    const customer = await Customer.findById(updatedSale.customerId).session(session);
+    const customer = await Customer.findById(updatedSale.customerId).session(
+      session
+    );
     if (customer) {
-      const oldBalanceIncrease = Math.max(oldSale.totalAmount - oldSale.amountPaid, 0);
-      const newBalanceIncrease = Math.max(updatedSale.totalAmount - updatedSale.amountPaid, 0);
+      const oldBalanceIncrease = Math.max(
+        oldSale.totalAmount - oldSale.amountPaid,
+        0
+      );
+      const newBalanceIncrease = Math.max(
+        updatedSale.totalAmount - updatedSale.amountPaid,
+        0
+      );
 
-      customer.balance = (customer.balance || 0) - oldBalanceIncrease + newBalanceIncrease;
+      customer.balance =
+        (customer.balance || 0) - oldBalanceIncrease + newBalanceIncrease;
       await customer.save({ session });
     }
 
@@ -173,7 +190,6 @@ export const updateSale = async (req, res) => {
     session.endSession();
 
     res.json({ success: true, data: updatedSale });
-
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -189,7 +205,7 @@ export const deleteSale = async (req, res) => {
   if (!id) {
     return res.status(400).json({
       success: false,
-      message: "Sale ID is required"
+      message: "Sale ID is required",
     });
   }
 
@@ -198,16 +214,18 @@ export const deleteSale = async (req, res) => {
     const deletedSale = await Sale.findByIdAndDelete(id);
 
     if (!deletedSale) {
-      return res.status(404).json({ success: false, message: "Sale not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Sale not found" });
     }
 
     // Step 2: Restore stock
     if (deletedSale.items && deletedSale.items.length > 0) {
-      for (const item of deletedSale.items) {   // FIXED: deleteSale.items → deletedSale.items
-        await Product.findByIdAndUpdate(
-          item.productId,
-          { $inc: { currentQuantity: item.quantity } }
-        );
+      for (const item of deletedSale.items) {
+        // FIXED: deleteSale.items → deletedSale.items
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { currentQuantity: item.quantity },
+        });
       }
     }
 
@@ -225,17 +243,15 @@ export const deleteSale = async (req, res) => {
     }
 
     res.json({ success: true, message: "Sale deleted successfully" });
-
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
 
 export default {
   createSale,
   getAllSales,
   getSaleById,
   updateSale,
-  deleteSale
+  deleteSale,
 };

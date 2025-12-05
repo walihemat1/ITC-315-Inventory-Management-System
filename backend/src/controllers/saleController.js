@@ -1,20 +1,31 @@
-import Sale from "../models/saleModel.js"
-import Product from "../models/productModel.js"
-import StockLog from "../models/stockLog.js"
-import updateLowStock from "../utils/updateLowStock.js"
+import Sale from "../models/saleModel.js";
+import Product from "../models/productModel.js";
+import StockLog from "../models/stockLogModel.js";
+import updateLowStock from "../utils/updateLowStock.js";
 
 export const createSale = async (req, res) => {
   try {
-    const { customerId, invoiceNumber, items, tax, discount, amountPaid, paymentMethod } = req.body;
+    const {
+      customerId,
+      invoiceNumber,
+      items,
+      tax,
+      discount,
+      amountPaid,
+      paymentMethod,
+    } = req.body;
 
     let subtotal = 0;
 
     for (const item of items) {
       const product = await Product.findById(item.productId);
-      if (!product) return res.status(404).json({ message: "Product not found" });
+      if (!product)
+        return res.status(404).json({ message: "Product not found" });
 
       if (product.currentQuantity < item.quantity) {
-        return res.status(400).json({success: false, message: "Not enough stock" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Not enough stock" });
       }
 
       const prevQty = product.currentQuantity;
@@ -50,7 +61,6 @@ export const createSale = async (req, res) => {
     });
 
     res.status(201).json(sale);
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

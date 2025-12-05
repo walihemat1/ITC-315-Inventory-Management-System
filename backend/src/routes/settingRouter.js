@@ -1,20 +1,22 @@
-import express from 'express'
+import express from "express";
 
 import {
   getSettings,
   updateSettings,
-  createSetting
-}  from "../controllers/settingController.js"
+  createSetting,
+} from "../controllers/settingController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
+import { isAdmin } from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 
 // create setting
-router.post("/", createSetting)
+router.post("/", authenticateUser, isAdmin, createSetting);
 
-// GET /settings 
-router.get("/", getSettings);
+// GET /settings
+router.get("/", authenticateUser, getSettings);
 
-// PATCH /settings 
-router.patch("/", updateSettings);
+// PATCH /settings
+router.patch("/", authenticateUser, isAdmin, updateSettings);
 
-export default  router;
+export default router;
