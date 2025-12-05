@@ -16,7 +16,7 @@ export default function SalesPage() {
     useEffect(() => {
       const fetchCustomers = async () => {
         try {
-          const response = await fetch("http://localhost:5000/api/customer");
+          const response = await fetch("http://localhost:5000/api/customers");
           const data = await response.json();
           setCustomers(data);
         } catch (error) {

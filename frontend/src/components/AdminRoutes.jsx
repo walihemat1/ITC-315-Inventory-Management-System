@@ -1,17 +1,16 @@
 // src/components/AdminRoutes.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import AdminDashboard from "../pages/AdminDashboard";
+import AdminDashboard from "../pages/admin/AdminDashboard";
 import ProductsPage from "../pages/Products";
+import Sales from "../pages/Sales";
 import EditSupplierPage from "./EditSupplierPage";
 import AddSupplierPage from "./AddSupplierPage";
 import SupplierManager from "../pages/SupplierManager"
 import CustomerManager from "../pages/CustomerManager";
 import EditCustomerPage from "./EditCustomerPage";
 import AddCustomerPage from "./AddCustomerPage";
-import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminUsersPage from "../pages/admin/AdminUser";
-// import ProductsPage from "../pages/Products";
 import PurchasesPage from "../pages/Purchases";
 
 export default function AdminRoutes() {
@@ -22,6 +21,8 @@ export default function AdminRoutes() {
         <Route path="users" element={<AdminUsersPage />} />
         {/* <Route path="products" element={<ProductsPage />} /> */}
         <Route path="purchases" element={<PurchasesPage />} />
+
+        <Route path="sales" element={<Sales />} />
 
         <Route path="suppliers" element={<SupplierManager/>} />
 
