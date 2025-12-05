@@ -1,7 +1,7 @@
-import Sale from "../models/saleModel"
-import Product from "../models/productModel"
-import StockLog from "../models/stockLogModel"
-import updateLowStock from "../utils/updateLowStock"
+import Sale from "../models/saleModel.js"
+import Product from "../models/productModel.js"
+import StockLog from "../models/stockLog.js"
+import updateLowStock from "../utils/updateLowStock.js"
 
 export const createSale = async (req, res) => {
   try {
