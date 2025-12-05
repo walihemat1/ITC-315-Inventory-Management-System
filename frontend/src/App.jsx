@@ -23,13 +23,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* Admin-only route group: /admin/* */}
         <Route path="/admin/*" element={<AdminRoutes />} />
 
-        {/* Staff-only route group: /staff/* */}
         <Route path="/staff/*" element={<StaffRoutes />} />
 
-        {/* Protected single route (example: both admin & staff can see products) */}
         <Route
           path="/products"
           element={
@@ -39,11 +36,9 @@ function App() {
           }
         />
 
-        {/* Default root redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
 }
-
 export default App;
