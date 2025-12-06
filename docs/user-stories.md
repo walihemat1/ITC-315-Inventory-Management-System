@@ -50,4 +50,4 @@ US33: As a user, I want to filter reports by date range so that I can view speci
 
 6. General UI/UX Enhancements  
 US34: As a user, I want the system to be fully responsive so that I can use it on all devices.  
-US35: As a user, I want clear success/error notifications so that I understand system actions..
+US35: As a user, I want clear success/error notifications so that I understand system actions.
