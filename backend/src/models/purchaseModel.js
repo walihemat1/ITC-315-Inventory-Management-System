@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const PurchaseSchema = new mongoose.Schema(
   {
     supplierId: { type: mongoose.Schema.Types.ObjectId, ref: "Supplier" },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     invoiceNumber: String,
     date: { type: Date, default: Date.now },
     items: [

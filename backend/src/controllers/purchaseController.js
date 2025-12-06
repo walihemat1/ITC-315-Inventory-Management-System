@@ -56,7 +56,37 @@ export const createPurchase = async (req, res) => {
 
 export const getPurchases = async (req, res) => {
   try {
-    const purchases = await Purchase.find().populate("items.productId", "name");
+    const purchases = await Purchase.find()
+    .populate("items.productId", "name")
+    .populate("userId", "fullName")
+    .populate("supplierId", "name")
+    .populate("updatedBy", "fullName");
+
+    if (purchases) {
+      res.status(200).json(purchases);
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updatePurchases = async (req, res) => {
+  try {
+    const {id} = req.params;
+    const purchases = await Purchase.findByIdAndUpdate(id, req.body)
+
+    if (purchases) {
+      res.status(200).json(purchases);
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deletePurchases = async (req, res) => {
+  try {
+    const {id} = req.params;
+    const purchases = await Purchase.findByIdAndDelete(id)
 
     if (purchases) {
       res.status(200).json(purchases);

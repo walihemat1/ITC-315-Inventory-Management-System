@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function EditPurchasePage({ Purchase, onEditPurchase, Suppliers }) {
-  const { id } = useParams(); 
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
+    updatedBy: user.id,
     supplierId: "",
     invoiceNumber: "",
     date: "",
@@ -17,23 +19,32 @@ export default function EditPurchasePage({ Purchase, onEditPurchase, Suppliers }
   });
 
   // =============== IMPORTANT: LOAD EXISTING PURCHASE =============== //
-  useEffect(() => {
-    if (!Purchase) return;
+useEffect(() => {
+  if (!Purchase) return;
 
-    setFormData({
-      supplierId: Purchase.supplierId?._id || "",
-      invoiceNumber: Purchase.invoiceNumber || "",
-      date: Purchase.date ? Purchase.date.substring(0, 10) : "",
-      items: Purchase.items || [],
-      totalAmount: Purchase.totalAmount || 0,
-      amountPaid: Purchase.amountPaid || 0,
-      balanceRemaining: Purchase.balanceRemaining || 0,
-    });
-  }, [Purchase]);
+  setFormData({
+    updatedBy: user.id,
+    supplierId: Purchase.supplierId?._id || "",
+    invoiceNumber: Purchase.invoiceNumber || "",
+    date: Purchase.date ? Purchase.date.substring(0, 10) : "",
+    items: Purchase.items.map(item => ({
+      productId: item.productId?._id || item.productId,  // convert populated object → ID
+      quantity: item.quantity || 0,
+      unitCost: item.unitCost || 0,
+      totalCost: item.totalCost || (item.quantity * item.unitCost)
+    })),
+    totalAmount: Purchase.totalAmount || 0,
+    amountPaid: Purchase.amountPaid || 0,
+    balanceRemaining: Purchase.balanceRemaining || 0,
+  });
+}, [Purchase]);
+
 
   // ================= FETCH PRODUCTS ================= //
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("http://localhost:5000/api/products",{
+      credentials: "include"
+    })
       .then((res) => res.json())
       .then(setProducts);
   }, []);
@@ -83,11 +94,13 @@ export default function EditPurchasePage({ Purchase, onEditPurchase, Suppliers }
   };
 
   // ================= SUBMIT ================= //
+  const id = Purchase._id;
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`http://localhost:5000/api/purchases/${id}`, {
+    const response = await fetch(`http://localhost:5000/api/purchase/${id}`, {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
@@ -97,9 +110,32 @@ export default function EditPurchasePage({ Purchase, onEditPurchase, Suppliers }
     if (response.ok) {
       alert("Purchase updated!");
       onEditPurchase(result);       // run your callback
-      navigate("/purchases");
+      navigate("/admin/purchases");
     } else {
       alert(result.message);
+    }
+  };
+  const deletePurchase = async (e) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/purchase/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("purchase deleted successfully!");
+        navigate("/admin/purchases");
+      } else {
+        alert("Error: " + result.message);
+      }
+    } catch (error) {
+      console.error("Error deleting purchase:", error);
+      alert("Error deleting purchase");
     }
   };
 
@@ -244,9 +280,14 @@ export default function EditPurchasePage({ Purchase, onEditPurchase, Suppliers }
           <p>Balance Remaining: {formData.balanceRemaining}</p>
         </div>
 
-        <button className="bg-green-600 hover:bg-green-800 text-white px-6 py-2 rounded">
+        <div className="flex gap-2 justify-center">
+          <button type="submit" className="bg-green-600 hover:bg-green-800 text-white px-6 py-2 rounded">
           Save Changes
         </button>
+        <button onClick={()=>deletePurchase()} className="bg-red-600 hover:bg-red-800 text-white px-6 py-2 rounded">
+          Delete
+        </button>
+        </div>
       </form>
     </div>
   );
