@@ -65,6 +65,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
         "http://localhost:5000/api/products/create",
         {
           method: "POST",
+          credentials: "include",
           body: data,
         }
       );

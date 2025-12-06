@@ -77,6 +77,29 @@ export default function EditProduct({
       alert("Error Updating product");
     }
   };
+  const deleteProduct = async (e) => {
+    try {
+      const id = product._id;
+      const response = await fetch(
+        `http://localhost:5000/api/products/${product._id}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Product deleted successfully!");
+      } else {
+        alert("Error: " + result.message);
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Error deleting product");
+    }
+  };
 
   return (
     <div className="my-6 p-2 md:p-6 bg-cyan-800 rounded-lg shadow-md">
@@ -183,9 +206,12 @@ export default function EditProduct({
         ))}
 
         {/* Submit */}
-        <div className="flex justify-center">
-          <button className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded">
-            Update Product
+        <div className="flex gap-2 justify-center">
+          <button type="submit" className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded">
+            Update
+          </button>
+          <button onClick={()=> deleteProduct()} className="bg-red-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded">
+            Delete
           </button>
         </div>
       </form>
