@@ -18,7 +18,9 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
+        const response = await fetch("http://localhost:5000/api/products",{
+          credentials: "include"
+        });
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -100,6 +102,7 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
     try {
       const res = await fetch("http://localhost:5000/api/sales/create", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
