@@ -129,7 +129,7 @@ useEffect(() => {
 
       if (response.ok) {
         alert("purchase deleted successfully!");
-        navigate("/admin/purchases");
+        navigate("purchases");
       } else {
         alert("Error: " + result.message);
       }

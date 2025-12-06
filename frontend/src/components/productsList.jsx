@@ -110,7 +110,7 @@ export default function ProductsList({ products, onEditProduct }) {
         </label>
       </div>
 
-      {/* STOCK IN */}
+      {/* Products */}
           <div className="bg-cyan-900 border border-cyan-700 rounded-lg p-4 md:p-6">
             {!filteredProducts  || filteredProducts.length == 0 ? (
               <p className="text-cyan-200">No products found</p>
