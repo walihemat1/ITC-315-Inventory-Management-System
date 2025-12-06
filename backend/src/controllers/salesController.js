@@ -83,7 +83,8 @@ export const getAllSales = async (req, res) => {
   try {
     const sales = await Sale.find()
       .populate("customerId", "name phone address")
-      .populate("sellerId", "name email")
+      .populate("sellerId", "fullName")
+      .populate("editedBy", "fullName")
       .populate("items.productId", "name sku");
 
     res.json(sales);

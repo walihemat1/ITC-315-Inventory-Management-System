@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Pen } from "lucide-react";
+import { Pen, DeleteIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function SalesList({ Sales, onEditSale }) {
@@ -101,75 +101,111 @@ export default function SalesList({ Sales, onEditSale }) {
         />
       </div>
 
-      {/* Sale LIST */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {filteredSales.map((s) => (
-          <div key={s._id} className="bg-cyan-800 p-4 rounded-md shadow-md">
-
-            {/* Edit Button */}
-            <div className="flex justify-end">
-              <Link
-                to="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onEditSale(s);
-                }}
-                className="h-8 w-8 hover:scale-105"
-              >
-                <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
-              </Link>
-            </div>
-
-            <p className="text-gray-300">
-              Customer: {s.customerId?.name ?? "N/A"}
-            </p>
-
-            <p className="text-gray-300">
-              Date: {new Date(s.date).toLocaleDateString()}
-            </p>
-
-            <p className="text-gray-300">
-              Invoice #: {s.invoiceNumber ?? "—"}
-            </p>
-
-            <p className="text-gray-300 mt-2">
-              Subtotal: ${s.subtotal?.toFixed(2) ?? "0.00"}
-            </p>
-
-            <p className="text-gray-300">
-              Tax: ${s.tax?.toFixed(2) ?? "0.00"}
-            </p>
-
-            <p className="text-gray-300">
-              Discount: ${s.discount?.toFixed(2) ?? "0.00"}
-            </p>
-
-            <p className="text-gray-300 font-semibold mt-2">
-              Total Amount: ${s.totalAmount?.toFixed(2)}
-            </p>
-
-            <p className="text-gray-300">
-              Paid: ${s.amountPaid?.toFixed(2)}
-            </p>
-
-            <p className="text-red-400 font-semibold">
-              Balance: ${(s.totalAmount - s.amountPaid).toFixed(2)}
-            </p>
-
-            <div className="mt-3 text-gray-200">
-              <h3 className="font-semibold">Items:</h3>
-              <ul className="ml-4 list-disc">
-                {s.items.map((item) => (
-                  <li key={item._id}>
-                    {item.productId?.name ?? "Unknown"}  
-                    — Qty: {item.quantity}, Price: ${item.price}, Total: ${item.total}
-                  </li>
+      {/* Purchases */}
+      <div className="bg-cyan-900 border border-cyan-700 rounded-lg p-4 md:p-6">
+        {!filteredSales  || filteredSales.length == 0 ? (
+          <p className="text-cyan-200">No purchases found</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs md:text-sm text-left">
+              <thead>
+                <tr className="border-b border-cyan-700 text-cyan-200">
+                  <th className="py-2 pr-3">Invoice #</th>
+                  <th className="py-2 pr-3">Created By</th>
+                  <th className="py-2 pr-3">Updated By</th>
+                  <th className="py-2 pr-3">Customer</th>
+                  <th className="py-2 pr-3">Date</th>
+                  <th className="py-2 pr-3">subTotal</th>
+                  <th className="py-2 pr-3">Tax</th>
+                  <th className="py-2 pr-3">Discount</th>
+                  <th className="py-2 pr-3">Total</th>
+                  <th className="py-2 pr-3">Paid</th>
+                  <th className="py-2 pr-3">Balance</th>
+                  <th className="py-2 pr-3">Items</th>
+                  <th className="py-2 pr-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSales.map((p) => (
+                  <tr
+                    key={p._id}
+                    className="border-b border-cyan-800 hover:bg-cyan-800/60"
+                  >
+                    <td className="py-2 pr-3 text-white">
+                      {p.invoiceNumber || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-white">
+                      {p.sellerId?.fullName || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-white">
+                      {p.editedBy?.fullName || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-white">
+                      {p.customerId?.name || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-green-400">
+                      {p.date || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.subtotal || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.tax || ""}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.discount || ""}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.totalAmount || ""}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.amountPaid || ""}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {(p.totalAmount - p.amountPaid)}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      <ul className="ml-4 list-disc">
+                        {p.items.map((item) => (
+                          <li key={item._id}>
+                            {item.productId?.name ?? "Unknown"}  
+                            — Qty: {item.quantity}, Cost: ${item.totalCost}
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      <div className="flex gap-0.5">
+                      <Link
+                        to="#"
+                        onClick={(e) => {
+                          e.preventDefault();  // stops navigation
+                          onEditSale(p);
+                        }}
+                        
+                        className="mt-2 h-8 w-8 hover:scale-105"
+                      >
+                        <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
+                      </Link>
+                      <Link
+                        to="#"
+                        onClick={(e) => {
+                          e.preventDefault();  // stops navigation
+                          onEditSale(p);
+                        }}
+                        
+                        className="mt-2 h-8 w-8 hover:scale-105"
+                      >
+                        <DeleteIcon className="bg-red-600 hover:bg-red-700 text-white rounded-md h-8 w-8 p-2" />
+                      </Link>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </ul>
-            </div>
-
+              </tbody>
+            </table>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
-  const { id } = useParams();
+export default function EditSalePage({ Sale, onEditSale, Customers }) {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+
   const [products, setProducts] = useState([]);
 
   const [formData, setFormData] = useState({
     customerId: "",
-    sellerId: "",
+    editedBy: user.id,
     invoiceNumber: "",
     date: "",
     items: [],
@@ -21,16 +23,21 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
     notes: "",
   });
 
-  // ------------------ LOAD EXISTING SALE ------------------ //
+  // ---------- LOAD EXISTING SALE ----------
   useEffect(() => {
     if (!Sale) return;
 
     setFormData({
       customerId: Sale.customerId?._id || "",
-      sellerId: Sale.sellerId?._id || "",
+      editedBy: user.id,
       invoiceNumber: Sale.invoiceNumber || "",
       date: Sale.date ? Sale.date.substring(0, 10) : "",
-      items: Sale.items || [],
+      items: Sale.items.map(item => ({
+        productId: item.productId?._id || item.productId,  // convert populated object → ID
+        quantity: item.quantity || 0,
+        unitCost: item.unitCost || 0,
+        totalCost: item.totalCost || (item.quantity * item.unitCost)
+      })),
       subtotal: Sale.subtotal || 0,
       tax: Sale.tax || 0,
       discount: Sale.discount || 0,
@@ -41,22 +48,21 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
     });
   }, [Sale]);
 
-  // --------------------- FETCH PRODUCTS --------------------- //
+  // ---------- FETCH PRODUCTS ----------
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("http://localhost:5000/api/products", { credentials: "include" })
       .then((res) => res.json())
       .then(setProducts);
   }, []);
 
-  // --------------------- ITEM HANDLERS ---------------------- //
+  // ------- ITEM FIELD CHANGE -------
   const handleItemChange = (index, field, value) => {
     const updated = [...formData.items];
     updated[index][field] = value;
 
     if (field === "quantity" || field === "price") {
-      const qty = Number(updated[index].quantity || 0);
-      const price = Number(updated[index].price || 0);
-      updated[index].total = qty * price;
+      updated[index].total =
+        Number(updated[index].quantity || 0) * Number(updated[index].price || 0);
     }
 
     setFormData((prev) => ({ ...prev, items: updated }));
@@ -65,8 +71,15 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
 
   const handleProductSelect = (index, productId) => {
     const selected = products.find((p) => p._id === productId);
-    handleItemChange(index, "productId", productId);
-    handleItemChange(index, "price", selected?.sellingPrice || 0);
+
+    const updated = [...formData.items];
+    updated[index].productId = productId;
+    updated[index].price = selected?.sellingPrice || 0;
+    updated[index].total =
+      updated[index].quantity * updated[index].price;
+
+    setFormData((prev) => ({ ...prev, items: updated }));
+    calculateTotals(updated);
   };
 
   const addItem = () => {
@@ -82,11 +95,11 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
     calculateTotals(updated);
   };
 
-  // ------------------ TOTAL CALCULATIONS ------------------ //
+  // -------- TOTALS ----------
   const calculateTotals = (items) => {
     const subtotal = items.reduce((sum, item) => sum + Number(item.total || 0), 0);
     const total =
-      subtotal + Number(formData.tax || 0) - Number(formData.discount || 0);
+      subtotal + Number(formData.tax) - Number(formData.discount);
 
     setFormData((prev) => ({
       ...prev,
@@ -95,19 +108,24 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
     }));
   };
 
-  const handlePaidChange = (value) => {
-    setFormData((prev) => ({ ...prev, amountPaid: value }));
-  };
-
-  // ---------------------- SUBMIT ---------------------- //
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`http://localhost:5000/api/sales/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    if (!Sale?._id) {
+      alert("Sale ID missing!");
+      console.log("Sale object:", Sale);
+      return;
+    }
+
+    const response = await fetch(
+      `http://localhost:5000/api/sales/${Sale._id}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      }
+    );
 
     const result = await response.json();
 
@@ -120,13 +138,35 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!Sale?._id) return alert("Sale ID missing!");
+
+    const response = await fetch(
+      `http://localhost:5000/api/sales/${Sale._id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert("Sale deleted successfully!");
+      onEditSale(result);
+      navigate("/Sales");
+    } else {
+      alert(result.message);
+    }
+  };
+
   if (!Sale) return <p className="text-white p-6">Loading...</p>;
 
-  // ---------------------- UI ---------------------- //
+  // --------- UI ----------
   return (
     <div className="my-6 p-6 bg-cyan-800 rounded-lg max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-white mb-6">Edit Sale</h1>
-
       <form onSubmit={handleSubmit} className="bg-cyan-900 rounded-lg p-6">
         
         {/* Customer */}
@@ -144,26 +184,6 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
             {Customers?.map((c) => (
               <option key={c._id} value={c._id}>
                 {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Seller */}
-        <div className="mb-4">
-          <label className="text-white block mb-1">Seller</label>
-          <select
-            value={formData.sellerId}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, sellerId: e.target.value }))
-            }
-            className="w-full p-2 bg-cyan-700 text-white border"
-            required
-          >
-            <option value="">Select Seller</option>
-            {Sellers?.map((s) => (
-              <option key={s._id} value={s._id}>
-                {s.name}
               </option>
             ))}
           </select>
@@ -326,9 +346,23 @@ export default function EditSalePage({ Sale, onEditSale, Customers, Sellers }) {
           />
         </div>
 
-        <button className="bg-green-600 hover:bg-green-800 text-white px-6 py-2 rounded mt-6">
-          Save Changes
-        </button>
+        <div className="flex gap-2 justify-center">
+          <button
+            type="submit"
+            className="bg-green-600 hover:bg-green-800 text-white px-6 py-2 rounded mt-6"
+          >
+            Save Changes
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="bg-red-600 hover:bg-red-800 text-white px-6 py-2 rounded mt-6"
+          >
+            Delete
+          </button>
+        </div>
+
       </form>
     </div>
   );
