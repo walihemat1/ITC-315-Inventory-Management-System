@@ -110,54 +110,77 @@ export default function ProductsList({ products, onEditProduct }) {
         </label>
       </div>
 
-      {/* PRODUCT LIST */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredProducts.map(product => (
-          
-          <div
-            key={product._id}
-            className="bg-cyan-800 justify-center hover:scale-103 border p-2 md:p-4 grid rounded shadow-sm"
-          >
-            <div className="flex justify-end mb-2 h-0 mr-[-10px]">
-              <Link
-                to="#"
-                onClick={(e) => {
-                  e.preventDefault();  // stops navigation
-                  onEditProduct(product, uniqueCategories, uniqueSuppliers );
-                  console.log(product);
-                }}
-                
-                className="mt-2 h-8 w-8 hover:scale-105"
-              >
-                <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
-              </Link>
+      {/* STOCK IN */}
+          <div className="bg-cyan-900 border border-cyan-700 rounded-lg p-4 md:p-6">
+            {!filteredProducts  || filteredProducts.length == 0 ? (
+              <p className="text-cyan-200">No products found</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-xs md:text-sm text-left">
+                  <thead>
+                    <tr className="border-b border-cyan-700 text-cyan-200">
+                      <th className="py-2 pr-3">Image</th>
+                      <th className="py-2 pr-3">Product</th>
+                      <th className="py-2 pr-3">SKU</th>
+                      <th className="py-2 pr-3">Category</th>
+                      <th className="py-2 pr-3">Price</th>
+                      <th className="py-2 pr-3">Stock</th>
+                      <th className="py-2 pr-3">Min Stock</th>
+                      <th className="py-2 pr-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProducts.map((p) => (
+                      <tr
+                        key={p._id}
+                        className="border-b border-cyan-800 hover:bg-cyan-800/60"
+                      >
+                        <td className="py-2 pr-3 text-white">
+                          <img 
+                            className="w-16"
+                            src={`http://localhost:5000${p.imageUrl}`}>
 
-
-            </div>
-            <img
-                className="w-48 h-48 object-cover mr-4 rounded mb-4"
-                src={`http://localhost:5000${product.imageUrl}`}
-                alt={product.name} 
-             />
-            <div className="flex flex-cols-2 gap-8 justify-between">
-                <div>
-                    <h2 className="font-bold">{product.name}</h2>
-                    <div>
-                        <p>Category: {product.categoryId ? product.categoryId.name : "N/A"}</p>
-                        <p>SKU: {product.sku}</p>
-                    </div>
-                </div>
-                <div>
-                    <div className="text-green-400">
-                        <p className="text-orange-300">Price: ${Number(product.sellingPrice || 0).toFixed(2)}</p>
-                        <p>Qty: {product.currentQuantity}</p>
-                        <p>Min Qty: {product.minimumQuantity}</p>
-                    </div>
-                </div>
-            </div>
+                            </img>
+                        </td>
+                        <td className="py-2 pr-3 text-white">
+                          {p.name || "-"}
+                        </td>
+                        <td className="py-2 pr-3 text-green-400">
+                          {p.sku}
+                        </td>
+                        <td className="py-2 pr-3 text-cyan-100">
+                          {p.categoryId?.name}
+                        </td>
+                        <td className="py-2 pr-3 text-cyan-100">
+                          {p.sellingPrice}
+                        </td>
+                        <td className="py-2 pr-3 text-cyan-100">
+                          {p.currentQuantity}
+                        </td>
+                        <td className="py-2 pr-3 text-cyan-100">
+                          {p.minimumQuantity}
+                        </td>
+                        <td className="py-2 pr-3 text-cyan-100">
+                          <Link
+                            to="#"
+                            onClick={(e) => {
+                              e.preventDefault();  // stops navigation
+                              onEditProduct(p, uniqueCategories, uniqueSuppliers );
+                              console.log(p);
+                            }}
+                            
+                            className="mt-2 h-8 w-8 hover:scale-105"
+                          >
+                            <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        ))}
-      </div>
     </div>
   );
 }
