@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import {Pen} from 'lucide-react';
+import {DeleteIcon, Pen} from 'lucide-react';
 import { Link } from "react-router-dom";
 
 export default function ProductsList({ products, onEditProduct }) {
@@ -161,6 +161,7 @@ export default function ProductsList({ products, onEditProduct }) {
                           {p.minimumQuantity}
                         </td>
                         <td className="py-2 pr-3 text-cyan-100">
+                          <div className="flex gap-0.5">
                           <Link
                             to="#"
                             onClick={(e) => {
@@ -173,6 +174,19 @@ export default function ProductsList({ products, onEditProduct }) {
                           >
                             <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
                           </Link>
+                          <Link
+                            to="#"
+                            onClick={(e) => {
+                              e.preventDefault();  // stops navigation
+                              onEditProduct(p, uniqueCategories, uniqueSuppliers );
+                              console.log(p);
+                            }}
+                            
+                            className="mt-2 h-8 w-8 hover:scale-105"
+                          >
+                            <DeleteIcon className="bg-red-600 hover:bg-red-700 text-white rounded-md h-8 w-8 p-2" />
+                          </Link>
+                          </div>
                         </td>
                       </tr>
                     ))}
