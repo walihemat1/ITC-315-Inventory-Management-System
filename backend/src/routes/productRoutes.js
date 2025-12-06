@@ -14,21 +14,13 @@ import {
 import { authenticateUser } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/adminMiddleware.js";
 
-router.get("/", getProducts);
+router.get("/", authenticateUser, getProducts);
+router.get("/low-stock", authenticateUser, getLowStockItems);
 router.get("/category/:category", authenticateUser, getProductsByCategory);
 router.get("/:id", authenticateUser, getProduct);
-router.get("/low-stock", authenticateUser, getLowStockItems);
-router.post(
-  "/create",
-  upload.single("image"),
 
-  createProduct
-);
-router.put(
-  "/:id",
-  upload.single("image"),
-  updateProduct
-);
+router.post("/create", upload.single("image"), authenticateUser, createProduct);
+router.put("/:id", upload.single("image"), authenticateUser, updateProduct);
 router.delete("/:id", authenticateUser, isAdmin, deleteProduct);
 
 export default router;

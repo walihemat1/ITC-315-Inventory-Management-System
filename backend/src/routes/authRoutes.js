@@ -5,7 +5,7 @@ import { isAdmin } from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 
-router.post("/register", register);
+router.post("/register", authenticateUser, register);
 router.post("/login", login);
 router.post("/logout", logout);
 

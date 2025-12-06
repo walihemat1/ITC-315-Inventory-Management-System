@@ -5,16 +5,17 @@ import {
   getCustomerById,
   updateCustomer,
   deleteCustomer,
-  updateCustomerBalance
+  updateCustomerBalance,
 } from "../controllers/customerController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", createCustomer);
-router.get("/", getCustomers);
-router.get("/:id", getCustomerById);
-router.put("/:id", updateCustomer);
-router.delete("/:id", deleteCustomer);
-router.put("/:id/balance", updateCustomerBalance);
+router.post("/", authenticateUser, createCustomer);
+router.get("/", authenticateUser, getCustomers);
+router.get("/:id", authenticateUser, getCustomerById);
+router.put("/:id", authenticateUser, updateCustomer);
+router.delete("/:id", authenticateUser, deleteCustomer);
+router.put("/:id/balance", authenticateUser, updateCustomerBalance);
 
 export default router;

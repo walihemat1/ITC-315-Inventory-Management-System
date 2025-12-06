@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
-
   const [formData, setFormData] = useState({
     supplierId: "",
     date: "",
@@ -16,8 +15,8 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products",{
-          credentials: "include"
+        const response = await fetch("http://localhost:5000/api/products", {
+          credentials: "include",
         });
         const data = await response.json();
         setProducts(data);
@@ -29,28 +28,21 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
     fetchProducts();
   }, []);
 
-
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // ----------------------------------
-  // Recalculate total
-  // ----------------------------------
   useEffect(() => {
-    const sum = items.reduce((acc, item) => acc + Number(item.totalCost || 0), 0);
+    const sum = items.reduce(
+      (acc, item) => acc + Number(item.totalCost || 0),
+      0
+    );
     setTotalAmount(sum);
   }, [items]);
 
-  // ----------------------------------
-  // Handle form data change
-  // ----------------------------------
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // ----------------------------------
-  // Handle item row updates
-  // ----------------------------------
   const handleItemChange = (index, field, value) => {
     const updated = [...items];
     updated[index][field] = value;
@@ -64,9 +56,6 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
     setItems(updated);
   };
 
-  // ----------------------------------
-  // Add new item row
-  // ----------------------------------
   const addItem = () => {
     setItems([
       ...items,
@@ -74,17 +63,11 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
     ]);
   };
 
-  // ----------------------------------
-  // Remove item row
-  // ----------------------------------
   const removeItem = (index) => {
     const updated = items.filter((_, i) => i !== index);
     setItems(updated);
   };
 
-  // ----------------------------------
-  // Submit purchase
-  // ----------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -128,23 +111,22 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
     }
   };
   const handleProductSelect = (index, e) => {
-  const productId = e.target.value;
-  const selectedProduct = Products.find(p => p._id === productId);
+    const productId = e.target.value;
+    const selectedProduct = Products.find((p) => p._id === productId);
 
-  handleItemChange(index, "productId", productId);
-  
-  if (selectedProduct) {
-    handleItemChange(index, "unitCost", selectedProduct.sellingPrice);
+    handleItemChange(index, "productId", productId);
 
-    // auto-update totalCost
-    handleItemChange(
-      index,
-      "totalCost",
-      selectedProduct.sellingPrice * items[index].quantity
-    );
-  }
-};
+    if (selectedProduct) {
+      handleItemChange(index, "unitCost", selectedProduct.sellingPrice);
 
+      // auto-update totalCost
+      handleItemChange(
+        index,
+        "totalCost",
+        selectedProduct.sellingPrice * items[index].quantity
+      );
+    }
+  };
 
   return (
     <div className="my-6 p-6 bg-cyan-800 rounded-lg shadow-md">
@@ -152,7 +134,6 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
       <div className="border-b"></div>
 
       <form className="mt-4" onSubmit={handleSubmit}>
-
         {/* Supplier */}
         <div className="mb-4 grid md:flex">
           <label className="text-white min-w-[120px]">Supplier</label>
@@ -193,7 +174,6 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
             className="mb-4 p-3 bg-cyan-700 rounded border border-cyan-600"
           >
             <div className="grid md:grid-cols-5 gap-3">
-
               {/* Product */}
               <label name="name">Name</label>
               <select
@@ -209,7 +189,6 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
                   </option>
                 ))}
               </select>
-
 
               {/* Qty */}
               <label name="quantity">Quantity</label>

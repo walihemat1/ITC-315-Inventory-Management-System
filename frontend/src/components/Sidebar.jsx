@@ -1,3 +1,4 @@
+// src/components/Sidebar.jsx
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
@@ -16,9 +17,9 @@ import {
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
-export default function Sidebar() {
+export default function Sidebar({ onLinkClick }) {
   const location = useLocation();
-  const { role } = useSelector((state) => state.auth);
+  const { role } = useSelector((state) => state.auth || {});
   const [activeNav, setActiveNav] = useState("");
 
   const sharedItems = [
@@ -33,23 +34,18 @@ export default function Sidebar() {
       path: "/products",
     },
     {
-      name: "Categories",
-      icon: FolderTree,
-      path: "/categories",
-    },
-    {
       name: "Stock Flow",
       icon: Activity,
       path: "/stockflow",
     },
-  ];
-
-  const adminItems = [
     {
       name: "Purchases",
       icon: ShoppingCart,
-      path: "/admin/purchases",
+      path: "/purchases",
     },
+  ];
+
+  const adminItems = [
     {
       name: "Sales",
       icon: BadgeDollarSign,
@@ -75,6 +71,21 @@ export default function Sidebar() {
       icon: Cog,
       path: "/admin/settings",
     },
+    {
+      name: "Suppliers",
+      path: "/admin/suppliers",
+      icon: User2Icon,
+    },
+    {
+      name: "Customers",
+      path: "/admin/customers",
+      icon: UserIcon,
+    },
+    {
+      name: "Categories",
+      icon: FolderTree,
+      path: "/admin/categories",
+    },
   ];
 
   const staffItems = [
@@ -90,21 +101,6 @@ export default function Sidebar() {
     ...(role === "admin" ? adminItems : staffItems),
   ];
 
-  if (role === "admin") {
-    navItems.push({
-      name: "Suppliers",
-      path: "/admin/suppliers",
-      icon: User2Icon,
-    });
-  }
-  if (role === "admin") {
-    navItems.push({
-      name: "Customers",
-      path: "/admin/customers",
-      icon: UserIcon,
-    });
-  }
-
   useEffect(() => {
     const current =
       location.pathname.split("/")[2] || location.pathname.split("/")[1];
@@ -113,33 +109,41 @@ export default function Sidebar() {
     );
 
     if (match) setActiveNav(match.name);
-  }, [location.pathname]);
+  }, [location.pathname, role]);
+
+  const handleItemClick = (name) => {
+    setActiveNav(name);
+    if (onLinkClick) onLinkClick();
+  };
 
   return (
-    <div
-      className="md:w-52 bg-teal-900 m-4 md:ml-0 rounded-lg py-4 px-0 
-     max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-700 scrollbar-track-teal-900"
-    >
-      <nav>
-        <ul className="grid grid-cols-1 gap-1">
+    <div className="h-full bg-gradient-to-b from-teal-950 via-teal-900 to-teal-950 border-r border-cyan-800 flex flex-col">
+      {/* Header / label */}
+      <div className="px-4 py-3 border-b border-teal-800 hidden md:block">
+        <p className="text-xs font-semibold tracking-wide text-teal-300 uppercase">
+          Navigation
+        </p>
+      </div>
+
+      {/* Nav items */}
+      <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-700 scrollbar-track-teal-950">
+        <ul className="py-3 space-y-1">
           {navItems.map((item) => {
             const IconComponent = item.icon;
+            const isActive = activeNav === item.name;
             return (
-              <li
-                key={item.name}
-                className="mx-6 md:mx-auto hover:scale-105 transition-transform w-auto md:w-48"
-              >
+              <li key={item.name}>
                 <Link
                   to={item.path}
-                  onClick={() => setActiveNav(item.name)}
-                  className={`flex items-center no-underline p-1 md:px-6 md:py-3 rounded transition-all ${
-                    activeNav === item.name
-                      ? "text-white font-extrabold bg-cyan-800 scale-[1.02]"
-                      : "text-cyan-200 font-bold hover:bg-cyan-800 hover:text-teal-200"
+                  onClick={() => handleItemClick(item.name)}
+                  className={`mx-2 flex items-center rounded-md px-3 py-2 text-sm font-semibold transition-all no-underline ${
+                    isActive
+                      ? "bg-cyan-800 text-white shadow-sm"
+                      : "text-cyan-200 hover:bg-cyan-800/70 hover:text-teal-50"
                   }`}
                 >
-                  <IconComponent className="w-5 h-5 mr-3" />
-                  <span>{item.name}</span>
+                  <IconComponent className="w-4 h-4 mr-3 shrink-0" />
+                  <span className="truncate">{item.name}</span>
                 </Link>
               </li>
             );

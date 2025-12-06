@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import StaffDashboard from "../pages/StaffDashboard";
+import StaffDashboard from "../pages/staff/StaffDashboard";
 
 // create or plug in your staff-only pages
 // import SalesPage from "../pages/Sales";

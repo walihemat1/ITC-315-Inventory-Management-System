@@ -14,6 +14,7 @@ import AdminUsersPage from "../pages/admin/AdminUser";
 import PurchasesPage from "../pages/Purchases";
 import SettingsPage from "../pages/setting/SettingPage";
 import ReportsPage from "../pages/report/ReportsPage";
+import CategoryPage from "../pages/category/Category";
 
 export default function AdminRoutes() {
   return (
@@ -35,6 +36,7 @@ export default function AdminRoutes() {
         <Route path="editcustomer/:id" element={<EditCustomerPage />} />
 
         <Route path="addcustomer" element={<AddCustomerPage />} />
+        <Route path="categories" element={<CategoryPage />} />
 
         <Route path="customers" element={<CustomerManager />} />
         <Route path="settings" element={<SettingsPage />} />

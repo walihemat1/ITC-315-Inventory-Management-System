@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 // All routes protected and admin-only
-// router.use(authenticateUser, isAdmin);
+router.use(authenticateUser, isAdmin);
 
 router.post("/", createStaff);
 router.get("/", getUsers);

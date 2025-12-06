@@ -1,10 +1,9 @@
-import express from 'express'
-import {adjustStock} from '../controllers/adjustmentController.js'
+import express from "express";
+import { adjustStock } from "../controllers/adjustmentController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
+const router = express.Router();
 
-const router = express.Router()
-
-router.post("/", adjustStock);
-
+router.post("/", authenticateUser, adjustStock);
 
 export default router;

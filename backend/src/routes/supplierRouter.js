@@ -7,11 +7,12 @@ import {
   updateSupplier,
   deleteSupplier,
 } from "../controllers/supplierController.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
-router.get("/", getSuppliers);
-router.get("/:id", getSupplier);
-router.post("/", createSupplier);
-router.put("/:id", updateSupplier);
-router.delete("/:id", deleteSupplier);
+router.get("/", authenticateUser, getSuppliers);
+router.get("/:id", authenticateUser, getSupplier);
+router.post("/", authenticateUser, createSupplier);
+router.put("/:id", authenticateUser, updateSupplier);
+router.delete("/:id", authenticateUser, deleteSupplier);
 
 export default router;

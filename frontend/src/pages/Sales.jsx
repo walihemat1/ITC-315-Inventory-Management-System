@@ -11,55 +11,59 @@ export default function SalesPage() {
   const [showSaleList, setShowSaleList] = useState(true);
   const [Sale, setSale] = useState(null);
 
-  const [Customers, setCustomers] =useState([]);
+  const [Customers, setCustomers] = useState([]);
 
-    useEffect(() => {
-      const fetchCustomers = async () => {
-        try {
-          const response = await fetch("http://localhost:5000/api/customers");
-          const data = await response.json();
-          setCustomers(data);
-        } catch (error) {
-          console.error("Error fetching Customers:", error);
-        }
-      };
-  
-      fetchCustomers();
-    }, []);
   useEffect(() => {
-  const fetchSales = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/Sales", {
-        method: "GET",
-        credentials: "include",   // <-- THIS SENDS COOKIES!
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/customers", {
+          method: "GET",
+          credentials: "include", // <-- THIS SENDS COOKIES!
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        setCustomers(data);
+      } catch (error) {
+        console.error("Error fetching Customers:", error);
+      }
+    };
 
-      const data = await response.json();
-      setSales(data);
-      console.log(data);
+    fetchCustomers();
+  }, []);
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/sales", {
+          method: "GET",
+          credentials: "include", // <-- THIS SENDS COOKIES!
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-    } catch (error) {
-      console.error("Error fetching Sales:", error);
-    }
-  };
+        const data = await response.json();
+        setSales(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching Sales:", error);
+      }
+    };
 
-  fetchSales();
-}, []);
-
+    fetchSales();
+  }, []);
 
   // Build unique category and supplier lists
   const [uniqueCategories, setUniqueCategories] = useState([]);
 
-  useEffect(() => {  
+  useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/categories");
         const data = await response.json();
 
-        setUniqueCategories(data);  // ← Insert JSON array into list
+        setUniqueCategories(data); // ← Insert JSON array into list
         console.log("Categories:", data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -76,8 +80,8 @@ export default function SalesPage() {
   };
 
   const handleEditSale = (p) => {
-    setSale(p);          // store selected Sale
-    setShowEditForm(true);  // show form
+    setSale(p); // store selected Sale
+    setShowEditForm(true); // show form
     setShowSaleList(false);
     setShowAddForm(false);
   };
@@ -103,25 +107,27 @@ export default function SalesPage() {
         {showEditForm && (
           <EditSale
             Sale={Sale}
-            Customers ={Customers}
+            Customers={Customers}
             onEditSale={(updated) => {
-              setSales(prev =>
-                prev.map(p => p._id === updated._id ? updated : p)
+              setSales((prev) =>
+                prev.map((p) => (p._id === updated._id ? updated : p))
               );
             }}
           />
         )}
 
-        {showSaleList && <div>
-          {Sales.length === 0 ? (
-            <p className="text-gray-600">No Sales available.</p>
-          ) : (
-            <SaleList
-              Sales={Sales}
-              onEditSale={handleEditSale}  // <-- now passes Sale
-            />
-          )}
-        </div> }
+        {showSaleList && (
+          <div>
+            {Sales.length === 0 ? (
+              <p className="text-gray-600">No Sales available.</p>
+            ) : (
+              <SaleList
+                Sales={Sales}
+                onEditSale={handleEditSale} // <-- now passes Sale
+              />
+            )}
+          </div>
+        )}
       </div>
     </Layout>
   );

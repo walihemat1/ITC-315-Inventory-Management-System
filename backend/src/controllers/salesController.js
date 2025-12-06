@@ -1,13 +1,9 @@
-import mongoose from "mongoose";
 import Sale from "../models/saleModel.js";
 import Product from "../models/productModel.js";
 import Customer from "../models/customerModel.js";
+import StockLog from "../models/stockLog.js";
 
-// Create a new sale
 export const createSale = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const { sellerId, customerId, items, totalAmount, amountPaid } = req.body;
 
@@ -16,8 +12,8 @@ export const createSale = async (req, res) => {
       !customerId ||
       !items ||
       items.length === 0 ||
-      !totalAmount ||
-      !amountPaid
+      totalAmount == null ||
+      amountPaid == null
     ) {
       return res.status(400).json({
         success: false,
@@ -25,53 +21,160 @@ export const createSale = async (req, res) => {
       });
     }
 
-    // STEP 1: Validate stock availability
+    // 1) Validate stock + prepare product data
+    const productDocs = [];
     for (const item of items) {
-      const product = await Product.findById(item.productId).session(session);
+      const product = await Product.findById(item.productId);
       if (!product) {
-        throw new Error(`Product not found: ${item.productId}`);
+        return res.status(404).json({
+          success: false,
+          message: `Product not found: ${item.productId}`,
+        });
       }
+
       if (product.currentQuantity < item.quantity) {
-        throw new Error(`Not enough stock for product ${product.name}`);
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for product ${product.name}`,
+        });
       }
+
+      productDocs.push(product);
     }
 
-    // STEP 2: Create the sale
-    const sale = new Sale(req.body);
-    const savedSale = await sale.save({ session });
+    // 2) Calculate item totals & subtotal
+    let subtotal = 0;
+    items.forEach((item, idx) => {
+      const price = Number(item.price ?? 0);
+      item.total = item.quantity * price;
+      subtotal += item.total;
+    });
 
-    // STEP 3: Deduct stock
-    for (const item of savedSale.items) {
-      await Product.findByIdAndUpdate(
-        item.productId,
-        { $inc: { currentQuantity: -item.quantity } },
-        { session }
-      );
+    // if you want totalAmount to be driven by subtotal you can recompute here,
+    // but I'll trust the payload since you're already sending totalAmount.
+
+    // 3) Create the sale
+    const sale = await Sale.create({
+      sellerId,
+      customerId,
+      items,
+      subtotal,
+      totalAmount,
+      amountPaid,
+      paymentMethod: req.body.paymentMethod,
+      invoiceNumber: req.body.invoiceNumber,
+      tax: req.body.tax ?? 0,
+      discount: req.body.discount ?? 0,
+      notes: req.body.notes ?? "",
+    });
+
+    // 4) Deduct stock & create stock-out logs
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const product = productDocs[i];
+
+      const prevQty = product.currentQuantity;
+      const newQty = prevQty - item.quantity;
+
+      product.currentQuantity = newQty;
+      await product.save();
+
+      await StockLog.create({
+        productId: product._id,
+        type: "SALE",
+        quantity: item.quantity,
+        previousStock: prevQty,
+        newStock: newQty,
+        referenceId: sale._id,
+      });
     }
 
-    // STEP 4: Update customer balance if needed
+    // 5) Update customer balance if needed
     if (amountPaid < totalAmount) {
       const balanceToAdd = totalAmount - amountPaid;
 
-      await Customer.findByIdAndUpdate(
-        customerId,
-        { $inc: { balance: balanceToAdd } },
-        { session }
-      );
+      await Customer.findByIdAndUpdate(customerId, {
+        $inc: { balance: balanceToAdd },
+      });
     }
 
-    await session.commitTransaction();
-    session.endSession();
-
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      data: savedSale,
+      data: sale,
     });
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
+    console.error("createSale error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 
-    res.status(400).json({
+// Update a sale
+export const updateSale = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Sale ID is required",
+      });
+    }
+
+    // 1) Get old sale
+    const oldSale = await Sale.findById(id);
+    if (!oldSale) {
+      return res.status(404).json({
+        success: false,
+        message: "Sale not found",
+      });
+    }
+
+    // 2) Restore stock from old sale
+    for (const item of oldSale.items) {
+      await Product.findByIdAndUpdate(item.productId, {
+        $inc: { currentQuantity: item.quantity },
+      });
+    }
+
+    // 3) Apply new data
+    const updatedSale = await Sale.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+
+    // 4) Subtract stock for new items
+    for (const item of updatedSale.items) {
+      await Product.findByIdAndUpdate(item.productId, {
+        $inc: { currentQuantity: -item.quantity },
+      });
+    }
+
+    // 5) Adjust customer balance
+    const customer = await Customer.findById(updatedSale.customerId);
+    if (customer) {
+      const oldBalanceIncrease = Math.max(
+        oldSale.totalAmount - oldSale.amountPaid,
+        0
+      );
+      const newBalanceIncrease = Math.max(
+        updatedSale.totalAmount - updatedSale.amountPaid,
+        0
+      );
+
+      customer.balance =
+        (customer.balance || 0) - oldBalanceIncrease + newBalanceIncrease;
+
+      if (customer.balance < 0) customer.balance = 0;
+
+      await customer.save();
+    }
+
+    return res.json({ success: true, data: updatedSale });
+  } catch (error) {
+    console.error("updateSale error:", error);
+    res.status(500).json({
       success: false,
       error: error.message,
     });
@@ -117,85 +220,6 @@ export const getSaleById = async (req, res) => {
     res.json({ success: true, data: sale });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
-  }
-};
-
-// Update a sale
-export const updateSale = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
-  try {
-    const { id } = req.params;
-
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Sale ID is required",
-      });
-    }
-
-    // Get old sale
-    const oldSale = await Sale.findById(id).session(session);
-    if (!oldSale) {
-      return res.status(404).json({
-        success: false,
-        message: "Sale not found",
-      });
-    }
-
-    // Step 1: Restore stock from old sale
-    for (const item of oldSale.items) {
-      await Product.findByIdAndUpdate(
-        item.productId,
-        { $inc: { currentQuantity: item.quantity } },
-        { session }
-      );
-    }
-
-    // Step 2: Update sale
-    const updatedSale = await Sale.findByIdAndUpdate(id, req.body, {
-      new: true,
-      session,
-    });
-
-    // Step 3: Subtract new stock
-    for (const item of updatedSale.items) {
-      await Product.findByIdAndUpdate(
-        item.productId,
-        { $inc: { currentQuantity: -item.quantity } },
-        { session }
-      );
-    }
-
-    // Step 4: Update customer balance
-    const customer = await Customer.findById(updatedSale.customerId).session(
-      session
-    );
-    if (customer) {
-      const oldBalanceIncrease = Math.max(
-        oldSale.totalAmount - oldSale.amountPaid,
-        0
-      );
-      const newBalanceIncrease = Math.max(
-        updatedSale.totalAmount - updatedSale.amountPaid,
-        0
-      );
-
-      customer.balance =
-        (customer.balance || 0) - oldBalanceIncrease + newBalanceIncrease;
-      await customer.save({ session });
-    }
-
-    await session.commitTransaction();
-    session.endSession();
-
-    res.json({ success: true, data: updatedSale });
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-
-    res.status(400).json({ success: false, error: error.message });
   }
 };
 

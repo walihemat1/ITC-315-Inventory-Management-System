@@ -9,10 +9,10 @@ import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/create", createPurchase);
-router.get("/", getPurchases);
-router.put("/:id", updatePurchases);
-router.delete("/:id", deletePurchases);
+router.post("/create", authenticateUser, createPurchase);
+router.get("/", authenticateUser, getPurchases);
+router.put("/:id", authenticateUser, updatePurchases);
+router.delete("/:id", authenticateUser, deletePurchases);
 router.post("/", authenticateUser, createPurchase);
 
 export default router;

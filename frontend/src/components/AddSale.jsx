@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import axiosClient from "../app/axiosClient";
 
 export default function AddSales({ Customers = [], onSaleAdded }) {
   const { user } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
     customerId: "",
-    sellerId: user.id,
-    date: "",
     amountPaid: 0,
+    paymentMethod: "cash",
+    notes: "",
   });
 
   const [items, setItems] = useState([
-    { productId: "", quantity: 1, unitCost: 0, totalCost: 0 },
+    { productId: "", quantity: 1, price: 0, total: 0 },
   ]);
 
   const [products, setProducts] = useState([]);
-  const [totalAmount, setTotalAmount] = useState(0);
+  const [subtotal, setSubtotal] = useState(0);
 
-  // Load products
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
-        const data = await response.json();
-        setProducts(data);
+        const res = await axiosClient.get("/api/products");
+        setProducts(res.data || []);
       } catch (error) {
         console.error("Error loading products:", error);
       }
@@ -31,109 +31,140 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
     loadProducts();
   }, []);
 
-  // Auto-recalculate total
   useEffect(() => {
-    const sum = items.reduce((acc, item) => acc + Number(item.totalCost || 0), 0);
-    setTotalAmount(sum);
+    const sum = items.reduce((acc, item) => acc + Number(item.total || 0), 0);
+    setSubtotal(sum);
   }, [items]);
 
-  // Handle form fields
+  const totalAmount = subtotal;
+  const balanceRemaining = totalAmount - Number(formData.amountPaid || 0);
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "amountPaid" ? Number(value || 0) : value,
+    }));
   };
 
-  // Handle item field change
   const handleItemChange = (index, field, value) => {
     const updated = [...items];
-    updated[index][field] = value;
 
-    if (field === "quantity" || field === "unitCost") {
-      const qty = Number(updated[index].quantity);
-      const cost = Number(updated[index].unitCost);
-      updated[index].totalCost = qty * cost;
+    if (field === "quantity" || field === "price") {
+      updated[index][field] = Number(value || 0);
+    } else {
+      updated[index][field] = value;
+    }
+
+    if (field === "quantity" || field === "price") {
+      const qty = Number(updated[index].quantity || 0);
+      const price = Number(updated[index].price || 0);
+      updated[index].total = qty * price;
     }
 
     setItems(updated);
   };
 
-  // When product is selected
   const handleProductSelect = (index, e) => {
     const productId = e.target.value;
     const selectedProduct = products.find((p) => p._id === productId);
 
-    handleItemChange(index, "productId", productId);
+    const updated = [...items];
+    updated[index].productId = productId;
 
     if (selectedProduct) {
-      handleItemChange(index, "unitCost", selectedProduct.sellingPrice);
-      handleItemChange(
-        index,
-        "totalCost",
-        selectedProduct.sellingPrice * items[index].quantity
-      );
+      const price = Number(selectedProduct.sellingPrice || 0);
+      const qty = Number(updated[index].quantity || 1);
+      updated[index].price = price;
+      updated[index].total = price * qty;
     }
+
+    setItems(updated);
   };
 
-  // Add new row
   const addItem = () => {
-    setItems([
-      ...items,
-      { productId: "", quantity: 1, unitCost: 0, totalCost: 0 },
-    ]);
+    setItems([...items, { productId: "", quantity: 1, price: 0, total: 0 }]);
   };
 
-  // Remove row
   const removeItem = (index) => {
     setItems(items.filter((_, i) => i !== index));
   };
 
-  // Submit sale
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // required by backend
+    if (!user?._id && !user?.id) {
+      alert("Missing sellerId (user not loaded). Please log in again.");
+      return;
+    }
+
+    if (!formData.customerId) {
+      alert("Customer is required. Please select a customer.");
+      return;
+    }
+
+    const validItems = items.filter(
+      (i) => i.productId && Number(i.quantity) > 0
+    );
+
+    if (validItems.length === 0) {
+      alert("Please add at least one product.");
+      return;
+    }
+
     const payload = {
+      sellerId: user?._id || user?.id,
       customerId: formData.customerId,
-      sellerId: user.id,
-      date: formData.date || new Date(),
-      items,
-      totalAmount,
+      items: validItems.map((i) => ({
+        productId: i.productId,
+        quantity: Number(i.quantity),
+        price: Number(i.price),
+        total: Number(i.total),
+      })),
+      totalAmount: Number(totalAmount),
       amountPaid: Number(formData.amountPaid),
-      balanceRemaining: totalAmount - Number(formData.amountPaid),
+      paymentMethod: formData.paymentMethod,
+      notes: formData.notes || "",
     };
 
+    console.log("SALE PAYLOAD ===>", payload);
+
     try {
-      const res = await fetch("http://localhost:5000/api/sales/create", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const res = await axiosClient.post("/api/sales/create", payload, {
+        withCredentials: true,
       });
 
-      const data = await res.json();
+      alert("Sale added successfully!");
+      if (onSaleAdded) onSaleAdded(res.data);
 
-      if (res.ok) {
-        alert("Sale added successfully!");
-        onSaleAdded(data);
-
-        setFormData({ customerId: "", date: "", amountPaid: 0 });
-        setItems([{ productId: "", quantity: 1, unitCost: 0, totalCost: 0 }]);
-      } else {
-        alert("Error: " + data.message);
-      }
+      // reset
+      setFormData({
+        customerId: "",
+        amountPaid: 0,
+        paymentMethod: "cash",
+        notes: "",
+      });
+      setItems([{ productId: "", quantity: 1, price: 0, total: 0 }]);
     } catch (err) {
       console.error("Error submitting sale:", err);
-      alert("Failed to submit sale");
+      console.error("Backend error:", err?.response?.data);
+
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "Failed to submit sale";
+      alert(msg);
     }
   };
 
   return (
     <div className="my-6 p-6 bg-cyan-800 rounded-lg shadow-md">
       <h2 className="text-xl font-bold text-white mb-4">Add Sale</h2>
-      <div className="border-b mb-4"></div>
+      <div className="border-b mb-4 border-cyan-600"></div>
 
-      <form onSubmit={handleSubmit}>
-        
-        {/* Customer */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* CUSTOMER */}
         <div className="mb-4 grid md:flex">
           <label className="text-white min-w-[120px]">Customer</label>
           <select
@@ -144,33 +175,64 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
             className="p-2 bg-cyan-700 text-white rounded border border-cyan-600 w-full"
           >
             <option value="">Select Customer</option>
-            {Customers.map((s) => (
-              <option key={s._id} value={s._id}>
-                {s.name}
+            {Customers.map((c) => (
+              <option key={c._id} value={c._id}>
+                {c.name}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Date */}
-        <div className="mb-4 grid md:flex">
-          <label className="text-white min-w-[120px]">Date</label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
+        {/* PAYMENT / AMOUNT PAID */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:flex">
+            <label className="text-white min-w-[120px]">Payment</label>
+            <select
+              name="paymentMethod"
+              value={formData.paymentMethod}
+              onChange={handleFormChange}
+              className="p-2 bg-cyan-700 text-white rounded border border-cyan-600 w-full"
+            >
+              <option value="cash">Cash</option>
+              <option value="card">Card</option>
+              <option value="mobile">Mobile</option>
+            </select>
+          </div>
+
+          <div className="grid md:flex">
+            <label className="text-white min-w-[120px]">Amount Paid</label>
+            <input
+              type="number"
+              name="amountPaid"
+              value={formData.amountPaid}
+              onChange={handleFormChange}
+              className="p-2 bg-cyan-700 text-white rounded border border-cyan-600 w-full"
+            />
+          </div>
+        </div>
+
+        {/* NOTES */}
+        <div className="grid md:flex">
+          <label className="text-white min-w-[120px]">Notes</label>
+          <textarea
+            name="notes"
+            value={formData.notes}
             onChange={handleFormChange}
+            rows={2}
             className="p-2 bg-cyan-700 text-white rounded border border-cyan-600 w-full"
+            placeholder="Any remarks, reference, etc."
           />
         </div>
 
-        {/* Items */}
+        {/* ITEMS */}
         <h3 className="text-white mt-6 mb-2 font-semibold">Items</h3>
 
         {items.map((item, index) => (
-          <div key={index} className="mb-4 p-3 bg-cyan-700 rounded border border-cyan-600">
+          <div
+            key={index}
+            className="mb-4 p-3 bg-cyan-700 rounded border border-cyan-600"
+          >
             <div className="grid md:grid-cols-5 gap-3">
-
               {/* Product */}
               <select
                 value={item.productId}
@@ -191,24 +253,31 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
                 type="number"
                 min="1"
                 value={item.quantity}
-                onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
+                onChange={(e) =>
+                  handleItemChange(index, "quantity", e.target.value)
+                }
                 className="p-2 rounded bg-cyan-600 text-white"
+                placeholder="Qty"
               />
 
-              {/* Unit Cost */}
+              {/* Price */}
               <input
                 type="number"
-                value={item.unitCost}
-                onChange={(e) => handleItemChange(index, "unitCost", e.target.value)}
+                value={item.price}
+                onChange={(e) =>
+                  handleItemChange(index, "price", e.target.value)
+                }
                 className="p-2 rounded bg-cyan-600 text-white"
+                placeholder="Price"
               />
 
-              {/* Total Cost */}
+              {/* Total */}
               <input
                 type="number"
                 readOnly
-                value={item.totalCost}
+                value={item.total}
                 className="p-2 rounded bg-gray-500 text-white"
+                placeholder="Total"
               />
 
               {/* Remove */}
@@ -234,25 +303,14 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
           + Add Item
         </button>
 
-        {/* Amount Paid */}
-        <div className="mb-4 grid md:flex">
-          <label className="text-white min-w-[120px]">Amount Paid</label>
-          <input
-            type="number"
-            name="amountPaid"
-            value={formData.amountPaid}
-            onChange={handleFormChange}
-            className="p-2 bg-cyan-700 text-white rounded border border-cyan-600 w-full"
-          />
+        {/* SUMMARY */}
+        <div className="text-white font-bold mb-4 space-y-1">
+          <p>Subtotal: {subtotal.toFixed(2)}</p>
+          <p>Total Amount: {totalAmount.toFixed(2)}</p>
+          <p>Balance Remaining: {balanceRemaining.toFixed(2)}</p>
         </div>
 
-        {/* Summary */}
-        <div className="text-white font-bold mb-4">
-          Total Amount: {totalAmount} <br />
-          Balance Remaining: {totalAmount - Number(formData.amountPaid)}
-        </div>
-
-        {/* Submit */}
+        {/* SUBMIT */}
         <div className="flex justify-center">
           <button
             type="submit"

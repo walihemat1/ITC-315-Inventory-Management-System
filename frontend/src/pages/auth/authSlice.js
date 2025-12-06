@@ -12,6 +12,15 @@ const initialState = {
   error: null,
 };
 
+const persistAuth = (state) => {
+  const authToStore = {
+    user: state.user,
+    token: state.token,
+    role: state.role,
+  };
+  localStorage.setItem("auth", JSON.stringify(authToStore));
+};
+
 // ---------- LOGIN ----------
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -28,8 +37,6 @@ export const loginUser = createAsyncThunk(
         return rejectWithValue(data.message || "Login failed");
       }
 
-      // Backend returns:
-      // data: { email, username, id }, token
       const user = {
         id: data.data.id,
         email: data.data.email,
@@ -45,6 +52,7 @@ export const loginUser = createAsyncThunk(
         role: user.role || null,
       };
 
+      // still store on login
       localStorage.setItem("auth", JSON.stringify(authToStore));
 
       return authToStore;
@@ -97,6 +105,22 @@ const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem("auth");
     },
+
+    // 🔑 called after profile update
+    updateAuthUser: (state, action) => {
+      const updated = action.payload || {};
+
+      if (!state.user) state.user = {};
+
+      // merge into user
+      state.user = { ...state.user, ...updated };
+
+      // keep role in sync if changed
+      if (updated.role) state.role = updated.role;
+
+      // ⬇ persist new values to localStorage
+      persistAuth(state);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -111,6 +135,8 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.role = action.payload.role;
+        // (login already saved to localStorage in thunk, but safe to call)
+        persistAuth(state);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -128,6 +154,7 @@ const authSlice = createSlice({
         state.token = null;
         state.role = null;
         state.error = null;
+        localStorage.removeItem("auth");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -136,5 +163,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuthState } = authSlice.actions;
+export const { resetAuthState, updateAuthUser } = authSlice.actions;
 export default authSlice.reducer;
