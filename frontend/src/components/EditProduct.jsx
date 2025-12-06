@@ -60,6 +60,7 @@ export default function EditProduct({
         `http://localhost:5000/api/products/${product._id}`,
         {
           method: "PUT",
+          credentials:"include",
           body: data,
         }
       );
@@ -78,9 +79,8 @@ export default function EditProduct({
     }
   };
   const deleteProduct = async (e) => {
-    e.preventDefault();
+    
     try {
-      const id = product._id;
       const response = await fetch(
         `http://localhost:5000/api/products/${product._id}`,
         {
