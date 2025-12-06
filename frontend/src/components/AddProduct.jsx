@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function AddProduct({ products = [], onProductAdded }) {
+export default function AddProduct({ products = [] }) {
+  const Navigate = useNavigate();
   // Extract unique categories and suppliers
-  const uniqueCategories = [
-    ...new Map(
-      products
-        .filter((p) => p.categoryId)
-        .map((p) => [p.categoryId._id, p.categoryId])
-    ).values(),
-  ];
+  const [uniqueCategories, setUniqueCategories] = useState([]);
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/api/categories",{
+            credentials: "include"
+          });
+          const data = await response.json();
+          setUniqueCategories(data);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+  
+      fetchCategories();
+    }, []);
 
   const uniqueSuppliers = [
     ...new Map(
@@ -74,7 +85,6 @@ export default function AddProduct({ products = [], onProductAdded }) {
 
       if (response.ok) {
         alert("Product added successfully!");
-        onProductAdded(result);
 
         setFormData({
           name: "",
@@ -87,6 +97,7 @@ export default function AddProduct({ products = [], onProductAdded }) {
           minimumQuantity: "",
           image: null,
         });
+        Navigate("/products");
       } else {
         alert("Error: " + result.message);
       }
