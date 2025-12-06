@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Pen } from "lucide-react";
+import { Pen, DeleteIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function PurchasesList({ Purchases, onEditPurchase }) {
@@ -106,63 +106,99 @@ export default function PurchasesList({ Purchases, onEditPurchase }) {
         />
       </div>
 
-      {/* PURCHASE LIST */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {filteredPurchases.map((p) => (
-          <div key={p._id} className="bg-cyan-800 p-4 rounded-md shadow-md">
-
-            {/* Edit Button */}
-            <div className="flex justify-end">
-              <Link
-                to="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onEditPurchase(p);
-                }}
-                className="h-8 w-8 hover:scale-105"
-              >
-                <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
-              </Link>
-            </div>
-
-            <h2 className="text-xl font-bold text-white">
-              Invoice #{p.invoiceNumber}
-            </h2>
-
-            <p className="text-gray-300">
-              Supplier: {p.supplierId?.name ?? "N/A"}
-            </p>
-
-            <p className="text-gray-300">
-              Date: {new Date(p.date).toLocaleDateString()}
-            </p>
-
-            <p className="text-gray-300 mt-2">
-              Total Amount: ${p.totalAmount.toFixed(2)}
-            </p>
-
-            <p className="text-gray-300">
-              Paid: ${p.amountPaid.toFixed(2)}
-            </p>
-
-            <p className="text-red-400">
-              Balance: ${p.balanceRemaining.toFixed(2)}
-            </p>
-
-            <div className="mt-3 text-gray-200">
-              <h3 className="font-semibold">Items:</h3>
-              <ul className="ml-4 list-disc">
-                {p.items.map((item) => (
-                  <li key={item._id}>
-                    {item.productId?.name ?? "Unknown"}  
-                    — Qty: {item.quantity}, Cost: ${item.totalCost}
-                  </li>
+      {/* Purchases */}
+      <div className="bg-cyan-900 border border-cyan-700 rounded-lg p-4 md:p-6">
+        {!filteredPurchases  || filteredPurchases.length == 0 ? (
+          <p className="text-cyan-200">No purchases found</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs md:text-sm text-left">
+              <thead>
+                <tr className="border-b border-cyan-700 text-cyan-200">
+                  <th className="py-2 pr-3">Invoice #</th>
+                  <th className="py-2 pr-3">Created By</th>
+                  <th className="py-2 pr-3">Updated By</th>
+                  <th className="py-2 pr-3">Supplier</th>
+                  <th className="py-2 pr-3">Date</th>
+                  <th className="py-2 pr-3">Total</th>
+                  <th className="py-2 pr-3">Paid</th>
+                  <th className="py-2 pr-3">Balance</th>
+                  <th className="py-2 pr-3">Items</th>
+                  <th className="py-2 pr-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPurchases.map((p) => (
+                  <tr
+                    key={p._id}
+                    className="border-b border-cyan-800 hover:bg-cyan-800/60"
+                  >
+                    <td className="py-2 pr-3 text-white">
+                      {p.invoiceNumber || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-white">
+                      {p.userId?.fullName || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-white">
+                      {p.updatedBy?.fullName || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-white">
+                      {p.supplierId?.name || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-green-400">
+                      {p.date || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.totalAmount || "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.amountPaid || ""}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      {p.balanceRemaining || ""}
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      <ul className="ml-4 list-disc">
+                        {p.items.map((item) => (
+                          <li key={item._id}>
+                            {item.productId?.name ?? "Unknown"}  
+                            — Qty: {item.quantity}, Cost: ${item.totalCost}
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="py-2 pr-3 text-cyan-100">
+                      <div className="flex gap-0.5">
+                      <Link
+                        to="#"
+                        onClick={(e) => {
+                          e.preventDefault();  // stops navigation
+                          onEditPurchase(p);
+                        }}
+                        
+                        className="mt-2 h-8 w-8 hover:scale-105"
+                      >
+                        <Pen className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-md h-8 w-8 p-2" />
+                      </Link>
+                      <Link
+                        to="#"
+                        onClick={(e) => {
+                          e.preventDefault();  // stops navigation
+                          onEditPurchase(p);
+                        }}
+                        
+                        className="mt-2 h-8 w-8 hover:scale-105"
+                      >
+                        <DeleteIcon className="bg-red-600 hover:bg-red-700 text-white rounded-md h-8 w-8 p-2" />
+                      </Link>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </ul>
-            </div>
-
+              </tbody>
+            </table>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -16,7 +16,9 @@ export default function PurchasesPage() {
     useEffect(() => {
       const fetchSuppliers = async () => {
         try {
-          const response = await fetch("http://localhost:5000/api/suppliers");
+          const response = await fetch("http://localhost:5000/api/suppliers",{
+            credentials: "include"
+          });
           const data = await response.json();
           setSuppliers(data);
         } catch (error) {
@@ -29,7 +31,9 @@ export default function PurchasesPage() {
   useEffect(() => {
     const fetchPurchases = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/purchase");
+        const response = await fetch("http://localhost:5000/api/purchase",{
+            credentials: "include"
+          });
         const data = await response.json();
         setPurchases(data);
       } catch (error) {
@@ -46,7 +50,9 @@ export default function PurchasesPage() {
   useEffect(() => {  
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/categories");
+        const response = await fetch("http://localhost:5000/api/categories",{
+            credentials: "include"
+          });
         const data = await response.json();
 
         setUniqueCategories(data);  // ← Insert JSON array into list

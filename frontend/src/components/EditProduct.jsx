@@ -78,6 +78,7 @@ export default function EditProduct({
     }
   };
   const deleteProduct = async (e) => {
+    e.preventDefault();
     try {
       const id = product._id;
       const response = await fetch(

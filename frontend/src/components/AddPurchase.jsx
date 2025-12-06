@@ -16,7 +16,9 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
+        const response = await fetch("http://localhost:5000/api/products",{
+          credentials: "include"
+        });
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -96,8 +98,9 @@ export default function AddPurchases({ suppliers = [], onPurchaseAdded }) {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/purchases/create", {
+      const res = await fetch("http://localhost:5000/api/purchase/create", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
