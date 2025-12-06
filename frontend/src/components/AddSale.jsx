@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 export default function AddSales({ Customers = [], onSaleAdded }) {
+  const { user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
-    supplierId: "",
+    customerId: "",
+    sellerId: user.id,
     date: "",
     amountPaid: 0,
   });
@@ -90,6 +93,7 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
 
     const payload = {
       customerId: formData.customerId,
+      sellerId: user.id,
       date: formData.date || new Date(),
       items,
       totalAmount,
@@ -100,6 +104,7 @@ export default function AddSales({ Customers = [], onSaleAdded }) {
     try {
       const res = await fetch("http://localhost:5000/api/sales/create", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
