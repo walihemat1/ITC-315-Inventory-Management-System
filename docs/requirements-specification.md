@@ -1,2 +1,1 @@
-The google drive link for Documentation: [https://drive.google.com/file/d/1eb24GZy2NrEpOehfWllC1fDHZVCDXtg8/view?usp=drive_link](https://drive.google.com/file/d/1AsIxqoybMaHuNrxl9HB0O3xue3x_ZB0D/view?usp=drive_link)
-
+The google drive link for Documentation: [https://docs.google.com/document/d/1ESFjl_kXUflW0icn-NkwmmXmkY30L9g1/edit?usp=drive_link&ouid=117163539339571581660&rtpof=true&sd=true](https://docs.google.com/document/d/1ESFjl_kXUflW0icn-NkwmmXmkY30L9g1/edit?usp=sharing&ouid=117163539339571581660&rtpof=true&sd=true)
